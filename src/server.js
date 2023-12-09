@@ -5,8 +5,8 @@ import viewEngine from "./config/viewEngine";
 import initWebRoutes from "./route/web";
 import initApiRoutes from "./route/api";
 import connectDB from "./config/connectDB";
-import cors from "cors";
 import corsConfig from "./config/cors";
+import cookieParser from 'cookie-parser';
 
 const app = Express();
 const port = process.env.PORT || 6969;
@@ -14,20 +14,33 @@ const port = process.env.PORT || 6969;
 // config Cors
 corsConfig(app);
 
-app.use(cors());
-
 //config view engine
 viewEngine(app);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// config cookie parser
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+// config cookie parser
+app.use(cookieParser());
 
 // test connection db
 connectDB();
 
-// init web route
-initWebRoutes(app);
+// // test JWT
+// createTokenJWT();
+// let decoded = verifyToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZHJraGFpayIsImFkZHJlc3MiOiJoYSBub2kiLCJpYXQiOjE2OTkwMjk5NTZ9.C4oRk1YX-HR6YA0pCBWFU3AkzeU3mRVoypSQ7rCcxn4");
+// console.log(decoded);
+
+// init route
+// initWebRoutes(app);
 initApiRoutes(app);
+
+app.use((req, res) => {
+    return res.send('404 not found!');
+})
 
 app.listen(port, () => {
     // call back

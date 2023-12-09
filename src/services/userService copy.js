@@ -37,7 +37,7 @@ let handleLoginService = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
             let response = {}
-            let isExist = await checkUserEmail(email);
+            let isExist = await checkUserEmail(email)
             if (isExist) {
                 // user already exist
                 let user = await db.User.findOne({

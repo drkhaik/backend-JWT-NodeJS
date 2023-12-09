@@ -2,10 +2,9 @@ require('dotenv').config();
 
 const corsConfig = (app) => {
     app.use(function (req, res, next) {
-
+        // console.log(req.method);
         // Website you wish to allow to connect
-        // res.setHeader('Access-Control-Allow-Origin', process.env.URL_REACT);
-        res.header('Access-Control-Allow-Origin', process.env.URL_FRONTEND);
+        res.setHeader('Access-Control-Allow-Origin', process.env.URL_FRONTEND);
 
         // Request methods you wish to allow
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -18,7 +17,9 @@ const corsConfig = (app) => {
         res.setHeader('Access-Control-Allow-Credentials', true);
 
         // Pass to next layer of middleware
-
+        if (req.method === 'OPTIONS') {
+            return res.sendStatus(200);
+        }
         next();
     });
 }
