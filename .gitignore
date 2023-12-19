@@ -3,4 +3,5 @@
 /.idea
 .idea/
 .env
+public
 node_modules/*

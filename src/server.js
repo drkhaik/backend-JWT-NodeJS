@@ -2,8 +2,7 @@ require('dotenv').config();
 import Express from "express";
 import bodyParser from "body-parser";
 import viewEngine from "./config/viewEngine";
-import initWebRoutes from "./route/web";
-import initApiRoutes from "./route/api";
+import initApiRoutes from "./route";
 import connectDB from "./config/connectDB";
 import corsConfig from "./config/cors";
 import cookieParser from 'cookie-parser';
@@ -34,8 +33,6 @@ connectDB();
 // let decoded = verifyToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZHJraGFpayIsImFkZHJlc3MiOiJoYSBub2kiLCJpYXQiOjE2OTkwMjk5NTZ9.C4oRk1YX-HR6YA0pCBWFU3AkzeU3mRVoypSQ7rCcxn4");
 // console.log(decoded);
 
-// init route
-// initWebRoutes(app);
 initApiRoutes(app);
 
 app.use((req, res) => {

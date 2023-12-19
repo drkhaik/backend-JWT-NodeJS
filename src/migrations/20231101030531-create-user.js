@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      fullName: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -20,7 +20,19 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      roleId: {
+      description: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      image: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      public_id: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      roleID: {
         type: Sequelize.INTEGER,
         allowNull: true,
         // defaultValue: 4

@@ -2,6 +2,8 @@ import bcrypt from 'bcryptjs';
 import db from '../models';
 import { getRole } from './JWTService';
 import { createTokenJWT } from '../middleware/JWTAction';
+import { deleteImageByPublicId } from '../utils/cloudinaryUtils';
+import _ from 'lodash';
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -104,39 +106,15 @@ let fetchAccountService = (_id) => {
     })
 }
 
-let createUserService = (data) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-            await db.User.create({
-                email: data.email,
-                password: hashPasswordFromBcrypt,
-                fullName: data.fullName,
-                // address: data.address,
-                // phoneNumber: data.phoneNumber,
-                // gender: data.gender,
-                // image: null,
-                // role: data.role,
-                // positionId: null,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            })
-            resolve({
-                errCode: 0,
-                message: "OK",
-            })
-        } catch (e) {
-            reject(e);
-        }
-    })
-}
-
 let fetchAllUser = () => {
     return new Promise(async (resolve, reject) => {
         try {
             let users = await db.User.findAll({
-                // raw: true,
-                attributes: { exclude: ["createdAt", "updatedAt", "password"] },
+                attributes: { exclude: ["password"] },
+                include: [
+                    { model: db.Role, as: 'roleData', attributes: ['name'] },
+                ],
+                raw: false,
             });
 
             resolve({
@@ -182,6 +160,43 @@ let checkRequiredFields = (data) => {
     return { isValid: isValid, element: element }
 }
 
+let createUserService = (data) => {
+    console.log("check data", data);
+    // return;
+    return new Promise(async (resolve, reject) => {
+        try {
+            let isExist = await checkUserEmail(data.email);
+            if (isExist) {
+                resolve({
+                    errCode: 1,
+                    message: "Email already exists!"
+                })
+            } else {
+                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                let res = await db.User.create({
+                    name: data.name,
+                    email: data.email,
+                    password: hashPasswordFromBcrypt,
+                    description: data.description,
+                    image: data.image,
+                    public_id: data.public_id,
+                    roleID: data.roleID,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                })
+                console.log("check res", res);
+                resolve({
+                    errCode: 0,
+                    message: "OK",
+                })
+            }
+        } catch (e) {
+            // console.log("check error", e);
+            reject(e);
+        }
+    })
+}
+
 let updateUserService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -196,21 +211,94 @@ let updateUserService = (data) => {
                 raw: false,
             })
             if (user) {
-                user.fullName = data.fullName;
-                user.roleId = data.roleId;
+                user.name = data.name;
+                user.description = data.description;
+                user.image = data.image;
+                user.public_id = data.public_id;
+                user.roleID = data.roleID;
+                user.updatedAt = new Date();
                 await user.save();
                 resolve({
                     errCode: 0,
-                    message: `Update user information successful!`
+                    message: `Ok`
                 });
             } else {
                 resolve({
                     errCode: 1,
-                    message: `The user's not found!`
+                    message: `The User not found!`
                 })
             }
         } catch (e) {
             reject(e);
+        }
+    })
+}
+
+let changeUserPasswordService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.id) {
+                resolve({
+                    errCode: 2,
+                    message: 'Missing required parameters!'
+                })
+            }
+            let user = await db.User.findOne({
+                where: { id: data.id },
+                raw: false,
+            })
+            let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+            if (user) {
+                user.password = hashPasswordFromBcrypt;
+                await user.save();
+                resolve({
+                    errCode: 0,
+                    message: `Ok`
+                });
+            } else {
+                resolve({
+                    errCode: 1,
+                    message: `The User not found!`
+                })
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
+let deleteUserService = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!id) {
+                resolve({
+                    errCode: 2,
+                    message: 'Missing required parameters!'
+                })
+            }
+            let user = await db.User.findByPk(id);
+            console.log("check user", user);
+            // return;
+            if (user) {
+                if (!_.isEmpty(user.public_id)) {
+                    await deleteImageByPublicId(user.public_id);
+                }
+                await db.User.destroy({
+                    where: { id: id }
+                });
+                // let allUsers = getAllUser();  
+                resolve({
+                    errCode: 0,
+                    message: `OK`
+                })
+            } else {
+                resolve({
+                    errCode: 1,
+                    message: `The User not found!`
+                }) // return
+            }
+        } catch (e) {
+            reject(e)
         }
     })
 }
@@ -242,5 +330,7 @@ module.exports = {
     getUserById: getUserById,
     fetchAccountService: fetchAccountService,
     updateUserService: updateUserService,
+    changeUserPasswordService: changeUserPasswordService,
+    deleteUserService: deleteUserService,
     getAllRoleService: getAllRoleService,
 }

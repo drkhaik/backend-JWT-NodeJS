@@ -113,6 +113,33 @@ let updateUser = async (req, res) => {
     }
 }
 
+let changeUserPassword = async (req, res) => {
+    try {
+        let response = await userService.changeUserPasswordService(req.body);
+        return res.status(200).json(response);
+    } catch (e) {
+        // console.log("check error", e);
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from server...",
+        })
+    }
+}
+
+let deleteUser = async (req, res) => {
+    try {
+        // console.log("check req.params", req.params);
+        let response = await userService.deleteUserService(req.params.id);
+        return res.status(200).json(response);
+    } catch (e) {
+        // console.log("check error", e);
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from server...",
+        })
+    }
+}
+
 let getAllRole = async (req, res) => {
     try {
         let response = await userService.getAllRoleService();
@@ -133,5 +160,7 @@ module.exports = {
     fetchUser,
     createNewUser,
     updateUser,
+    changeUserPassword,
+    deleteUser,
     getAllRole,
 }
