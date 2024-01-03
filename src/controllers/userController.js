@@ -14,21 +14,22 @@ let handleLogin = async (req, res) => {
         if (response?.data?.access_token) {
             res.cookie("jwt", response.data.access_token, { httpOnly: true, maxAge: 60 * 60 * 1000, secure: true });
         }
+        // console.log("check response", response);
         return res.status(200).json(response);
     } catch (e) {
+        // console.log("check e", e);
         return res.status(200).json({
             errCode: -1,
-            message: "Incorrect email or password!",
+            // message: res.message,
         })
     }
 }
 
 let fetchAccount = async (req, res) => {
     try {
-        let id = req?.tokenDecoded?.user ? req.tokenDecoded.user.id : null;
+        let id = req?.tokenDecoded?.user ? req.tokenDecoded.user._id : null;
         if (id === null) return;
-        let response = await userService.fetchAccountService(id)
-        // console.log("check req", req);
+        let response = await userService.fetchAccountService(id);
         return res.status(200).json({
             errCode: 0,
             message: "Ok",
@@ -38,6 +39,7 @@ let fetchAccount = async (req, res) => {
             }
         });
     } catch (e) {
+        console.log("check err", e);
         return res.status(500).json({
             errCode: -1,
             message: "Error from server...",
@@ -78,7 +80,7 @@ let fetchAllUser = async (req, res) => {
 
 let fetchUser = async (req, res) => {
     try {
-        let response = await userService.getUserById(req.query.id);
+        let response = await userService.getUserById(req.params.id);
         return res.status(200).json(response);
 
     } catch (e) {

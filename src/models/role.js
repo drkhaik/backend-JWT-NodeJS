@@ -1,25 +1,19 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class Role extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-      Role.hasMany(models.User, { foreignKey: 'roleID', as: 'roleData' })
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const roleSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    description: {
+        type: String
     }
-  };
-  Role.init({
-    name: DataTypes.STRING,
-    description: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Role',
-  });
-  return Role;
-};
+}, { timestamps: true });
+
+// User.find({}).populate('role', 'name');
+
+const Role = mongoose.model('Role', roleSchema);
+
+module.exports = Role; 

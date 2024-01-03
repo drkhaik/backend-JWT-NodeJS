@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
-import db from '../models';
+import User from '../models/User';
+import Role from '../models/Role';
 import { getRole } from './JWTService';
 import { createTokenJWT } from '../middleware/JWTAction';
 import { deleteImageByPublicId } from '../utils/cloudinaryUtils';
@@ -10,9 +11,7 @@ const salt = bcrypt.genSaltSync(10);
 let checkUserEmail = (userEmail) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let user = await db.User.findOne({
-                where: { email: userEmail }
-            })
+            let user = await User.findOne({ email: userEmail });
             if (user) {
                 resolve(true)
             } else {
@@ -41,19 +40,15 @@ let handleLoginService = (email, password) => {
             let response = {}
             let isExist = await checkUserEmail(email);
             if (isExist) {
-                // user already exist
-                let user = await db.User.findOne({
-                    where: { email: email },
-                    // attributes: ['id', 'email', 'fullName', 'password', 'roleId'],
-                    attributes: { exclude: ["createdAt", "updatedAt"] },
-                    raw: true,
-                })
-                if (user) {
-                    // compare password 
-                    let checkPassword = await bcrypt.compareSync(password, user.password);
-                    if (checkPassword) {
-                        let role = await getRole(user);
-                        user.role = role.name;
+                const userFromDB = await User.findOne({ email: email }).select({ public_id: 0, __v: 0, createdAt: 0, updatedAt: 0 });
+                if (userFromDB) {
+                    let isPasswordCorrect = await bcrypt.compareSync(password, userFromDB.password);
+                    if (isPasswordCorrect) {
+                        const role = await getRole(userFromDB);
+                        let user = {
+                            ...userFromDB._doc,
+                        };
+                        user.role = role.name
                         delete user.password;
 
                         let payload = { user };
@@ -88,15 +83,15 @@ let handleLoginService = (email, password) => {
 let fetchAccountService = (_id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let user = await db.User.findOne({
-                where: { id: _id },
-                // attributes: ['id', 'email', 'fullName', 'password', 'roleId'],
-                attributes: { exclude: ["createdAt", "updatedAt"] },
-                raw: true,
-            });
-            if (user) {
-                let role = await getRole(user);
-                user.role = role.name;
+            let user = {};
+            const userFromDB = await User.findOne({ _id: _id }).select({ public_id: 0, __v: 0, createdAt: 0, updatedAt: 0 })
+            if (userFromDB) {
+                const role = await getRole(userFromDB);
+                user = {
+                    ...userFromDB._doc,
+                    role: role.name
+                };
+                // console.log("check user", user);
                 delete user.password;
             }
             resolve(user);
@@ -109,14 +104,15 @@ let fetchAccountService = (_id) => {
 let fetchAllUser = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            let users = await db.User.findAll({
-                attributes: { exclude: ["password"] },
-                include: [
-                    { model: db.Role, as: 'roleData', attributes: ['name'] },
-                ],
-                raw: false,
-            });
+            // let users = await User.findAll({
+            //     attributes: { exclude: ["password"] },
+            //     include: [
+            //         { model: db.Role, as: 'roleData', attributes: ['name'] },
+            //     ],
+            //     raw: false,
+            // });
 
+            let users = await User.find({}, { password: 0 }).populate('roleID', 'name');
             resolve({
                 errCode: 0,
                 message: "OK",
@@ -131,8 +127,9 @@ let fetchAllUser = () => {
 let getUserById = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let user = await db.User.findOne({
+            let user = await User.findOne({
                 // raw: true,
+                _id: id
             });
             // users.get({ plain: true });
             resolve({
@@ -173,7 +170,7 @@ let createUserService = (data) => {
                 })
             } else {
                 let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-                let res = await db.User.create({
+                let res = await User.create({
                     name: data.name,
                     email: data.email,
                     password: hashPasswordFromBcrypt,
@@ -184,7 +181,6 @@ let createUserService = (data) => {
                     createdAt: new Date(),
                     updatedAt: new Date()
                 })
-                console.log("check res", res);
                 resolve({
                     errCode: 0,
                     message: "OK",
@@ -200,16 +196,16 @@ let createUserService = (data) => {
 let updateUserService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.id) {
+            if (!data._id) {
                 resolve({
                     errCode: 2,
                     message: 'Missing required parameters!'
                 })
             }
-            let user = await db.User.findOne({
-                where: { id: data.id },
-                raw: false,
+            let user = await User.findOne({
+                _id: data._id
             })
+            // console.log("check res", user);
             if (user) {
                 user.name = data.name;
                 user.description = data.description;
@@ -217,7 +213,8 @@ let updateUserService = (data) => {
                 user.public_id = data.public_id;
                 user.roleID = data.roleID;
                 user.updatedAt = new Date();
-                await user.save();
+                // await user.save(); // lưu 1 đối tượng ko quan tâm đã có hay chưa
+                await User.updateOne({ _id: data._id }, user);
                 resolve({
                     errCode: 0,
                     message: `Ok`
@@ -237,20 +234,19 @@ let updateUserService = (data) => {
 let changeUserPasswordService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.id) {
+            if (!data._id) {
                 resolve({
                     errCode: 2,
                     message: 'Missing required parameters!'
                 })
             }
-            let user = await db.User.findOne({
-                where: { id: data.id },
-                raw: false,
+            let user = await User.findOne({
+                _id: data._id
             })
             let hashPasswordFromBcrypt = await hashUserPassword(data.password);
             if (user) {
                 user.password = hashPasswordFromBcrypt;
-                await user.save();
+                await User.updateOne({ _id: data._id }, user);
                 resolve({
                     errCode: 0,
                     message: `Ok`
@@ -267,25 +263,21 @@ let changeUserPasswordService = (data) => {
     })
 }
 
-let deleteUserService = (id) => {
+let deleteUserService = (_id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!id) {
+            if (!_id) {
                 resolve({
                     errCode: 2,
                     message: 'Missing required parameters!'
                 })
             }
-            let user = await db.User.findByPk(id);
-            console.log("check user", user);
-            // return;
+            let user = await User.findById(_id);
             if (user) {
                 if (!_.isEmpty(user.public_id)) {
                     await deleteImageByPublicId(user.public_id);
                 }
-                await db.User.destroy({
-                    where: { id: id }
-                });
+                await User.deleteOne({ _id: _id });
                 // let allUsers = getAllUser();  
                 resolve({
                     errCode: 0,
@@ -294,10 +286,11 @@ let deleteUserService = (id) => {
             } else {
                 resolve({
                     errCode: 1,
-                    message: `The User not found!`
+                    message: `The user not found!`
                 }) // return
             }
         } catch (e) {
+            console.log("check error", e);
             reject(e)
         }
     })
@@ -306,11 +299,11 @@ let deleteUserService = (id) => {
 let getAllRoleService = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            let roles = await db.Role.findAll({
-                // raw: true,
-                attributes: { exclude: ["createdAt", "updatedAt", "description"] },
-            });
-
+            // let roles = await db.Role.findAll({
+            //     // raw: true,
+            //     attributes: { exclude: ["createdAt", "updatedAt", "description"] },
+            // });
+            let roles = await Role.find({}).select({ createdAt: 0, updatedAt: 0, description: 0 });
             resolve({
                 errCode: 0,
                 message: "OK",

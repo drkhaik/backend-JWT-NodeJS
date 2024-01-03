@@ -83,9 +83,11 @@ const checkTokenJWT = (req, res, next) => {
     })
 }
 
-const checkUserPermission = (req, res, next) => {
-    if (nonSecurePaths.includes(req.path) || req.path === '/fetch-account' || req.path === '/role') return next();
+const checkAdminPermission = (req, res, next) => {
+    // console.log("check req.tokenDecoded", req.tokenDecoded);
+    if (nonSecurePaths.includes(req.path)) return next();
     if (req.tokenDecoded) {
+        // console.log("check user", req.tokenDecoded.user);
         let role = req.tokenDecoded.user.role;
         if (role && role === 'Admin') {
             return next();
@@ -98,6 +100,9 @@ const checkUserPermission = (req, res, next) => {
 }
 
 module.exports = {
-    createTokenJWT, verifyToken, checkTokenJWT, checkUserPermission,
+    createTokenJWT,
+    verifyToken,
+    checkTokenJWT,
+    checkAdminPermission,
     checkAccessToken
 }

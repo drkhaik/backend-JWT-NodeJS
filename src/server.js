@@ -3,9 +3,10 @@ import Express from "express";
 import bodyParser from "body-parser";
 import viewEngine from "./config/viewEngine";
 import initApiRoutes from "./route";
-import connectDB from "./config/connectDB";
+import connectToDatabase from "./config/connectDB";
 import corsConfig from "./config/cors";
 import cookieParser from 'cookie-parser';
+import socketConfig from "./services/socketService";
 
 const app = Express();
 const port = process.env.PORT || 6969;
@@ -25,22 +26,27 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 // config cookie parser
 app.use(cookieParser());
 
-// test connection db
-connectDB();
-
 // // test JWT
 // createTokenJWT();
 // let decoded = verifyToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZHJraGFpayIsImFkZHJlc3MiOiJoYSBub2kiLCJpYXQiOjE2OTkwMjk5NTZ9.C4oRk1YX-HR6YA0pCBWFU3AkzeU3mRVoypSQ7rCcxn4");
 // console.log(decoded);
 
-initApiRoutes(app);
+const startServer = async () => {
+    try {
+        await connectToDatabase();
+        initApiRoutes(app);
+        app.use((req, res) => {
+            return res.send('404 not found!');
+        });
+        const server = app.listen(port, () => {
+            console.log("Backend Node Js is running on the port: " + port);
+        });
+        socketConfig(server);
 
-app.use((req, res) => {
-    return res.send('404 not found!');
-})
+    } catch (error) {
+        console.error('Error starting server:', error);
+    }
+};
 
-app.listen(port, () => {
-    // call back
-    console.log("Backend Node Js is running on the port: " + port);
-})
+startServer();
 
