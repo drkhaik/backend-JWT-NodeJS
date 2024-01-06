@@ -158,7 +158,7 @@ let checkRequiredFields = (data) => {
 }
 
 let createUserService = (data) => {
-    console.log("check data", data);
+    // console.log("check data", data);
     // return;
     return new Promise(async (resolve, reject) => {
         try {

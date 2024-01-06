@@ -11,10 +11,9 @@ module.exports = (server) => {
     });
 
     io.on("connection", (socket) => {
-        console.log(`User Connected, ${socket.id}`);
         socket.on("join_room", (roomId) => {
             socket.join(roomId);
-            console.log(`User with ID, ${socket.id} joined room: ${roomId}`);
+            // console.log(`User with ID, ${socket.id} joined room: ${roomId}`);
         });
 
         socket.on("send_message", async (data) => {
@@ -25,11 +24,7 @@ module.exports = (server) => {
                     body,
                     author: author,
                 });
-                socket.to(room).emit("receive_message", {
-                    conversation: room,
-                    body,
-                    author: author,
-                });
+                socket.to(room).emit("receive_message", newMessage);
                 await newMessage.save();
 
             } catch (error) {
@@ -39,9 +34,9 @@ module.exports = (server) => {
             }
         });
 
-        socket.on("disconnect", (socket) => {
-            console.log(`User Disconnected ${socket.id}`)
-        });
+        // socket.on("disconnect", (socket) => {
+        //     console.log(`User Disconnected`)
+        // });
 
     });
 
