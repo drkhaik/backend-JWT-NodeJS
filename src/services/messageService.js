@@ -1,4 +1,4 @@
-import Message from "../models/Message";
+import { Message } from "../models/Message";
 
 const limitNumberOfMessage = 20;
 let fetchMessageHistoryService = (conversationId) => {
@@ -10,13 +10,14 @@ let fetchMessageHistoryService = (conversationId) => {
                 createdAt: -1
             }).limit(limitNumberOfMessage)
                 .select({
-                    __v: false,
-                    // _id: false,
-                    // createdAt: false,
-                    updatedAt: false,
-                });
+                    updatedAt: 0,
+                    __v: 0,
+                    __t: 0,
+                    public_id: 0,
+                })
             // messageList.reverse();
             // console.log("check message list initial", messageList);
+            // return;
             resolve({
                 errCode: 0,
                 message: "OK",
@@ -31,8 +32,6 @@ let fetchMessageHistoryService = (conversationId) => {
 let fetchMoreMessageService = ({ conversationId, lastMessageId }) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log("cehck conversationId", conversationId);
-            console.log("cehck lastMessageId", lastMessageId);
             const messageList = await Message.find({
                 conversation: conversationId,
                 _id: { $lt: lastMessageId }
@@ -45,7 +44,7 @@ let fetchMoreMessageService = ({ conversationId, lastMessageId }) => {
                     // createdAt: false,
                     updatedAt: false,
                 });
-            console.log("check message list", messageList);
+            // console.log("check message list", messageList);
             // return;
             resolve({
                 errCode: 0,

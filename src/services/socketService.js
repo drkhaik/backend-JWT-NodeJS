@@ -1,6 +1,6 @@
 require('dotenv').config();
 import { Server } from 'socket.io';
-import Message from '../models/Message';
+import { TextMessage, FileMessage } from '../models/Message';
 
 module.exports = (server) => {
     const io = new Server(server, {
@@ -19,7 +19,7 @@ module.exports = (server) => {
         socket.on("send_message", async (data) => {
             const { room, author, body } = data;
             try {
-                const newMessage = new Message({
+                const newMessage = new TextMessage({
                     conversation: room,
                     body,
                     author: author,
@@ -34,9 +34,28 @@ module.exports = (server) => {
             }
         });
 
-        // socket.on("disconnect", (socket) => {
-        //     console.log(`User Disconnected`)
-        // });
+        socket.on("send_file", async (data) => {
+            const { room, author, body, fileUrl, public_id, fileName, fileType, fileSize } = data;
+            try {
+                const newMessage = new FileMessage({
+                    conversation: room,
+                    body,
+                    author: author,
+                    fileUrl,
+                    public_id,
+                    fileName,
+                    fileType,
+                    fileSize
+                });
+                socket.to(room).emit("receive_file", newMessage);
+                await newMessage.save();
+
+            } catch (error) {
+                console.error("Error handling conversation", error);
+                socket.emit("message_error", "Failed to send message");
+                throw error;
+            }
+        });
 
     });
 
