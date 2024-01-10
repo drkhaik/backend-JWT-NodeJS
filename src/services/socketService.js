@@ -1,6 +1,6 @@
 require('dotenv').config();
 import { Server } from 'socket.io';
-import { TextMessage, FileMessage } from '../models/Message';
+import Message from '../models/Message';
 
 module.exports = (server) => {
     const io = new Server(server, {
@@ -17,14 +17,21 @@ module.exports = (server) => {
         });
 
         socket.on("send_message", async (data) => {
-            const { room, author, body } = data;
+            const { room, author, body, type } = data;
             try {
-                const newMessage = new TextMessage({
+                const newMessage = new Message({
                     conversation: room,
                     body,
+                    type,
                     author: author,
                 });
-                socket.to(room).emit("receive_message", newMessage);
+                let messageReceive = {
+                    conversation: room,
+                    body,
+                    type,
+                    author: author,
+                }
+                socket.to(room).emit("receive_message", messageReceive);
                 await newMessage.save();
 
             } catch (error) {
@@ -35,12 +42,13 @@ module.exports = (server) => {
         });
 
         socket.on("send_file", async (data) => {
-            const { room, author, body, fileUrl, public_id, fileName, fileType, fileSize } = data;
+            const { room, author, body, type, fileUrl, public_id, fileName, fileType, fileSize } = data;
             try {
-                const newMessage = new FileMessage({
+                const newMessage = new Message({
                     conversation: room,
                     body,
                     author: author,
+                    type,
                     fileUrl,
                     public_id,
                     fileName,

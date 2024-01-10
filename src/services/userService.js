@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import User from '../models/User';
+import { User } from '../models/User';
 import Role from '../models/Role';
 import { getRole } from './JWTService';
 import { createTokenJWT } from '../middleware/JWTAction';
@@ -158,8 +158,6 @@ let checkRequiredFields = (data) => {
 }
 
 let createUserService = (data) => {
-    // console.log("check data", data);
-    // return;
     return new Promise(async (resolve, reject) => {
         try {
             let isExist = await checkUserEmail(data.email);

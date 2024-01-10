@@ -10,55 +10,32 @@ const messageSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }
-}, { timestamps: true });
-
-const textMessageSchema = new Schema({
-    type: {
-        type: String,
-        default: 'text'
     },
-    body: {
+    type: {
         type: String,
         required: true
-    },
-});
-
-const fileMessageSchema = new Schema({
-    // Các trường riêng cho tin nhắn file
-    type: {
-        type: String,
-        default: 'file'
     },
     body: {
         type: String,
         required: true
     },
     fileUrl: {
-        type: String,
-        required: true
+        type: String
     },
     public_id: {
-        type: String,
-        required: true
+        type: String
     },
     fileName: {
-        type: String,
-        required: true
+        type: String
     },
     fileType: {
-        type: String,
-        required: true
+        type: String
     },
     fileSize: {
-        type: Number,
-        required: true
+        type: Number
     }
-});
+}, { timestamps: true });
 
 const Message = mongoose.model('Message', messageSchema);
 
-const TextMessage = Message.discriminator('TextMessage', textMessageSchema);
-const FileMessage = Message.discriminator('FileMessage', fileMessageSchema);
-
-module.exports = { Message, TextMessage, FileMessage };
+module.exports = Message;

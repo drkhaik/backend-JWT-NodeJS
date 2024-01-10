@@ -14,7 +14,6 @@ let fetchMessageHistory = async (req, res) => {
 }
 
 let fetchMoreMessage = async (req, res) => {
-    console.log("check req.body", req.body);
     try {
         let response = await messageService.fetchMoreMessageService(req.body);
         return res.status(200).json(response);

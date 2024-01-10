@@ -1,5 +1,6 @@
 import Conversation from "../models/Conversation";
-import User from "../models/User";
+import Message from "../models/Message";
+import { User } from "../models/User";
 
 let createConversationService = async (data) => {
     return new Promise(async (resolve, reject) => {
@@ -48,13 +49,18 @@ let fetchConversationByUserIdService = (userId) => {
             for (let i = 0; i < conversations.length; i++) {
                 let item = conversations[i].participants.filter(element => element.toHexString() !== userId);
                 let user = await User.find({ _id: item[0] }, { _id: true, name: true, email: true, image: true });
+                let lastMessage = await Message.findOne({ conversation: conversations[i].conversationId })
+                    .sort({ createdAt: -1 })
+                    .select({ __v: 0, updatedAt: 0, __t: 0, _id: 0, createdAt: 0 });
+                // console.log("check lastMessageId", lastMessage);
                 let newUser = {
                     ...user[0]._doc,
-                    conversationId: conversations[i].conversationId
+                    conversationId: conversations[i].conversationId,
+                    lastMessage: lastMessage
                 };
                 users.push(newUser);
             }
-            // console.log("check arrConversationId", arrConversationId);
+            // console.log("check users", users);
             // const users = await User.find({
             //     _id: { $in: arrRecipientId, },
             // }, { _id: true, name: true, email: true, image: true });

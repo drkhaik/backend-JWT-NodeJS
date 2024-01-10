@@ -14,9 +14,6 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
-    description: {
-        type: String,
-    },
     image: {
         type: String,
     },
@@ -31,57 +28,36 @@ const userSchema = new Schema({
     email_verified: {
         type: Number,
     }
-
 }, { timestamps: true });
 
+const departmentSchema = new Schema({
+    type: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+    },
+});
 
-// users
-//   - {
-//     id: ObjectId("...ID của học sinh..."),
-//     type: "student",
-//     ...
-//   }
-//   - {
-//     id: ObjectId("...ID của giảng viên..."),
-//     type: "faculty",
-//     ...
-//   }
-//   - {
-//     id: ObjectId("...ID của admin..."),
-//     type: "admin",
-//     ...
-//   }
-
-
-// {
-//     "_id": ObjectId("..."),
-//     "from": "user1",
-//     "to": "user2",
-//     "message": "Hello, how are you?",
-//     "createdAt": ISODate("2023-12-24T12:34:56Z")
-//   }
-
-// {
-//     "from": "user1",
-//     "to": "user2",
-//     "messages": [
-//       {
-//         "text": "Xin chào thầy",
-//         "createdAt": new Date()
-//       },
-//       {
-//         "text": "Em có thắc mắc về bài tập",
-//         "createdAt": new Date()
-//       }
-//     ],
-//     "createdAt": new Date()
-//   }
-
-// db.conversations.find({
-//     "from": "user1",
-//     "to": "user2"
-//   })
+const studentSchema = new Schema({
+    student_id: {
+        type: String,
+        required: true,
+    },
+    faculty: {
+        type: String,
+        ref: 'Department',
+        required: true,
+    }
+});
 
 const User = mongoose.model('User', userSchema);
+const Department = User.discriminator('Department', departmentSchema);
+const Student = User.discriminator('Student', studentSchema);
 
-module.exports = User;
+module.exports = {
+    User,
+    Department,
+    Student,
+};
