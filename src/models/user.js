@@ -27,20 +27,7 @@ const userSchema = new Schema({
     },
     email_verified: {
         type: Number,
-    }
-}, { timestamps: true });
-
-const departmentSchema = new Schema({
-    type: {
-        type: String,
-        required: true,
     },
-    description: {
-        type: String,
-    },
-});
-
-const studentSchema = new Schema({
     student_id: {
         type: String,
         required: true,
@@ -50,14 +37,9 @@ const studentSchema = new Schema({
         ref: 'Department',
         required: true,
     }
-});
+}, { timestamps: true });
+
 
 const User = mongoose.model('User', userSchema);
-const Department = User.discriminator('Department', departmentSchema);
-const Student = User.discriminator('Student', studentSchema);
 
-module.exports = {
-    User,
-    Department,
-    Student,
-};
+module.exports = User;

@@ -1,6 +1,8 @@
 import bcrypt from 'bcryptjs';
-import { User } from '../models/User';
+import User from '../models/User';
 import Role from '../models/Role';
+import Conversation from '../models/Conversation';
+import Message from '../models/Message';
 import { getRole } from './JWTService';
 import { createTokenJWT } from '../middleware/JWTAction';
 import { deleteImageByPublicId } from '../utils/cloudinaryUtils';
@@ -112,7 +114,8 @@ let fetchAllUser = () => {
             //     raw: false,
             // });
 
-            let users = await User.find({}, { password: 0 }).populate('roleID', 'name');
+            let users = await User.find({}, { password: 0 })
+                .populate('roleID', 'name');
             resolve({
                 errCode: 0,
                 message: "OK",
@@ -297,10 +300,6 @@ let deleteUserService = (_id) => {
 let getAllRoleService = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            // let roles = await db.Role.findAll({
-            //     // raw: true,
-            //     attributes: { exclude: ["createdAt", "updatedAt", "description"] },
-            // });
             let roles = await Role.find({}).select({ createdAt: 0, updatedAt: 0, description: 0 });
             resolve({
                 errCode: 0,
@@ -308,6 +307,62 @@ let getAllRoleService = () => {
                 data: roles
             })
         } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+let fetchDepartmentUserService = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let departmentRole = await Role.findOne({ name: 'Department' });
+            if (departmentRole) {
+                let users = await User.find({ roleID: departmentRole._id })
+                    .select({
+                        password: 0,
+                        public_id: 0,
+                        createdAt: 0,
+                        updatedAt: 0,
+                        student_id: 0,
+                        faculty: 0,
+                        __v: 0,
+                    });
+                // console.log("check users", users);
+                for (let i = 0; i < users.length; i++) {
+                    const conversation = await Conversation.findOne({
+                        participants: { $in: [users[i]._id] }
+                    }).select({ __v: false, _id: false, isNewConversation: false, createdAt: false, updatedAt: false })
+                    // console.log("check conversation", conversation);
+                    if (conversation) {
+                        let conversationId = conversation.conversationId;
+                        let lastMessage = await Message.findOne({ conversation: conversationId })
+                            .sort({ createdAt: -1 })
+                            .select({ __v: 0, updatedAt: 0, __t: 0, _id: 0, createdAt: 0 });
+                        let newUser = {
+                            ...users[i]._doc,
+                            conversationId: conversationId,
+                            lastMessage: lastMessage
+                        };
+                        // users.pop(users[i]);
+                        users.splice(i, 1, newUser);
+                    }
+                }
+                // users.reverse();
+                // console.log("check after produce users", users);
+                // return;
+                resolve({
+                    errCode: 0,
+                    message: "OK",
+                    data: users
+                })
+            } else {
+                resolve({
+                    errCode: 1,
+                    message: "Department role not found!",
+                })
+            }
+        } catch (e) {
+            console.log("check e", e);
             reject(e)
         }
     })
@@ -324,4 +379,5 @@ module.exports = {
     changeUserPasswordService: changeUserPasswordService,
     deleteUserService: deleteUserService,
     getAllRoleService: getAllRoleService,
+    fetchDepartmentUserService: fetchDepartmentUserService
 }

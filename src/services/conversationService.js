@@ -1,6 +1,6 @@
 import Conversation from "../models/Conversation";
 import Message from "../models/Message";
-import { User } from "../models/User";
+import User from "../models/User";
 
 let createConversationService = async (data) => {
     return new Promise(async (resolve, reject) => {

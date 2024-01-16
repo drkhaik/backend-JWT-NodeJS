@@ -49,9 +49,22 @@ let deletePost = async (req, res) => {
     }
 }
 
+let fetchMorePost = async (req, res) => {
+    try {
+        let response = await postService.fetchMorePostService(req.body);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from server...",
+        })
+    }
+}
+
 module.exports = {
     createPost,
     fetchAllPost,
     updatePost,
     deletePost,
+    fetchMorePost,
 }

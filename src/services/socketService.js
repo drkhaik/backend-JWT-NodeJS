@@ -13,7 +13,7 @@ module.exports = (server) => {
     io.on("connection", (socket) => {
         socket.on("join_room", (roomId) => {
             socket.join(roomId);
-            // console.log(`User with ID, ${socket.id} joined room: ${roomId}`);
+            console.log(`User with ID, ${socket.id} joined room: ${roomId}`);
         });
 
         socket.on("send_message", async (data) => {

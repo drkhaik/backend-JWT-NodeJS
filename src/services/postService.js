@@ -1,7 +1,6 @@
 import Post from "../models/Post";
-import Message from "../models/Message";
-import { User } from "../models/User";
 
+const limitNumberOfPost = 5;
 let createPostService = async (data) => {
     // console.log("check data", data);
     return new Promise(async (resolve, reject) => {
@@ -34,7 +33,40 @@ let fetchAllPostService = () => {
             let posts = await Post.find({}, {
                 password: 0
             }).populate('author', 'name image')
-                .sort({ createdAt: -1 });
+                .sort({ createdAt: -1 })
+                .limit(limitNumberOfPost)
+                .select({
+                    __v: 0,
+                    __t: 0,
+                });
+            resolve({
+                errCode: 0,
+                message: "OK",
+                data: posts
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+let fetchMorePostService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const posts = await Post.find({
+                _id: { $lt: data.lastPostId }
+            }).populate('author', 'name image')
+                .sort({
+                    createdAt: -1
+                }).limit(limitNumberOfPost)
+                .select({
+                    __v: 0,
+                    __t: 0,
+                    // _id: false,
+                    // createdAt: false,
+                    // updatedAt: false,
+                });
+            // console.log("check post list", posts);
             resolve({
                 errCode: 0,
                 message: "OK",
@@ -106,4 +138,5 @@ module.exports = {
     fetchAllPostService: fetchAllPostService,
     updatePostService: updatePostService,
     deletePostService: deletePostService,
+    fetchMorePostService: fetchMorePostService
 }

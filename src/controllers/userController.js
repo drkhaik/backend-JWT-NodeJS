@@ -63,9 +63,6 @@ let handleLogout = async (req, res) => {
 }
 
 let fetchAllUser = async (req, res) => {
-    // console.log('Cookies: ', req.cookies);
-    // console.log('Signed Cookies: ', req.signedCookies);
-    // console.log("check request", req.user);
     try {
         let response = await userService.fetchAllUser();
         return res.status(200).json(response);
@@ -154,6 +151,18 @@ let getAllRole = async (req, res) => {
     }
 }
 
+let fetchDepartmentUser = async (req, res) => {
+    try {
+        let response = await userService.fetchDepartmentUserService();
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from server...",
+        })
+    }
+}
+
 module.exports = {
     handleLogin,
     fetchAccount,
@@ -165,4 +174,5 @@ module.exports = {
     changeUserPassword,
     deleteUser,
     getAllRole,
+    fetchDepartmentUser,
 }
