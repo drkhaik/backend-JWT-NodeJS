@@ -12,6 +12,10 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
+        // required: true,
+    },
+    googleId: {
+        type: String,
         required: true,
     },
     image: {
@@ -23,19 +27,17 @@ const userSchema = new Schema({
     roleID: {
         type: Schema.Types.ObjectId,
         ref: 'Role',
-        required: true
+        // required: true
     },
     email_verified: {
         type: Number,
     },
     student_id: {
         type: String,
-        required: true,
     },
     faculty: {
-        type: String,
-        ref: 'Department',
-        required: true,
+        type: Schema.Types.ObjectId,
+        ref: 'Faculty',
     }
 }, { timestamps: true });
 

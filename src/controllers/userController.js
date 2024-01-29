@@ -25,6 +25,48 @@ let handleLogin = async (req, res) => {
     }
 }
 
+let handleGoogleLogin = async (req, res) => {
+    let user = req.user;
+    if (!user) {
+        return res.status(200).json({
+            errCode: 1,
+            message: 'Missing input parameters!'
+        })
+    }
+    try {
+        let response = await userService.handleLoginGoogleService(user._id)
+        if (response?.data?.access_token) {
+            res.cookie("jwt", response.data.access_token, { httpOnly: true, maxAge: 60 * 60 * 1000, secure: true });
+        }
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(200).json({
+            errCode: -1,
+        })
+    }
+}
+
+let handleGoogleLoginDepartment = async (req, res) => {
+    let user = req.user;
+    if (!user) {
+        return res.status(200).json({
+            errCode: 1,
+            message: 'Missing input parameters!'
+        })
+    }
+    try {
+        let response = await userService.handleLoginGoogleDepartmentService(user._id)
+        if (response?.data?.access_token) {
+            res.cookie("jwt", response.data.access_token, { httpOnly: true, maxAge: 60 * 60 * 1000, secure: true });
+        }
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(200).json({
+            errCode: -1,
+        })
+    }
+}
+
 let fetchAccount = async (req, res) => {
     try {
         let id = req?.tokenDecoded?.user ? req.tokenDecoded.user._id : null;
@@ -50,6 +92,8 @@ let fetchAccount = async (req, res) => {
 let handleLogout = async (req, res) => {
     try {
         res.clearCookie("jwt");
+        res.clearCookie("express:sess");
+        res.clearCookie("express:sess.sig");
         return res.status(200).json({
             errCode: 0,
             message: "Ok",
@@ -125,6 +169,19 @@ let changeUserPassword = async (req, res) => {
     }
 }
 
+let changeFaculty = async (req, res) => {
+    console.log("check req.body", req.body);
+    try {
+        let response = await userService.changeUserFacultyService(req.body);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from server...",
+        })
+    }
+}
+
 let deleteUser = async (req, res) => {
     try {
         // console.log("check req.params", req.params);
@@ -153,7 +210,7 @@ let getAllRole = async (req, res) => {
 
 let fetchDepartmentUser = async (req, res) => {
     try {
-        let response = await userService.fetchDepartmentUserService();
+        let response = await userService.fetchDepartmentUserService(req.params.id);
         return res.status(200).json(response);
     } catch (e) {
         return res.status(200).json({
@@ -165,6 +222,8 @@ let fetchDepartmentUser = async (req, res) => {
 
 module.exports = {
     handleLogin,
+    handleGoogleLogin,
+    handleGoogleLoginDepartment,
     fetchAccount,
     handleLogout,
     fetchAllUser,
@@ -172,6 +231,7 @@ module.exports = {
     createNewUser,
     updateUser,
     changeUserPassword,
+    changeFaculty,
     deleteUser,
     getAllRole,
     fetchDepartmentUser,

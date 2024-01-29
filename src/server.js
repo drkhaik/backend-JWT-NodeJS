@@ -7,6 +7,10 @@ import connectToDatabase from "./config/connectDB";
 import corsConfig from "./config/cors";
 import cookieParser from 'cookie-parser';
 import socketConfig from "./services/socketService";
+import './middleware/passportGoogleSSO';
+import passport from "passport";
+import helmet from "helmet";
+import cookieSession from "cookie-session";
 
 const app = Express();
 const port = process.env.PORT || 6969;
@@ -25,6 +29,17 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // config cookie parser
 app.use(cookieParser());
+app.use(helmet());
+
+app.use(
+    cookieSession({
+        maxAge: 60 * 60 * 1000,
+        keys: [process.env.JWT_SECRET],
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // // test JWT
 // createTokenJWT();

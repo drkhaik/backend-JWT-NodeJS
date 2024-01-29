@@ -5,6 +5,7 @@ import userRoute from './user';
 import conversationRoute from './conversation';
 import messageRoute from './message';
 import postRoute from './post';
+import facultyRoute from './faculty';
 
 const router = Express.Router();
 
@@ -16,6 +17,7 @@ const initApiRoutes = (app) => {
     router.use(messageRoute);
     router.use(postRoute);
     router.use(uploadRoute);
+    router.use(facultyRoute);
 
     return app.use("/api/v1", router);
 }

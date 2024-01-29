@@ -1,7 +1,14 @@
 require('dotenv').config();
 import jwt from "jsonwebtoken";
 
-const nonSecurePaths = ['/', '/logout', '/login'];
+const nonSecurePaths = ['/',
+    '/logout',
+    '/login',
+    '/auth/google',
+    '/auth/google/callback',
+    '/auth/student',
+    '/auth/department'
+];
 
 const createTokenJWT = (payload) => {
     // let payload = { name: 'drkhaik', address: 'ha noi' };
@@ -35,32 +42,6 @@ const verifyToken = (token) => {
     //     console.log(decoded);
     //     return decoded;
     // })
-}
-
-const extractToken = (req) => {
-    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-        return req.headers.authorization.split(' ')[1];
-    }
-    return null;
-}
-
-const checkAccessToken = (req, res, next) => {
-    if (nonSecurePaths.includes(req.path)) return next();
-    const tokenFromHeader = extractToken(req);
-    if (tokenFromHeader) {
-        let token = tokenFromHeader;
-        let decoded = verifyToken(token);
-        if (decoded) {
-            // console.log(decoded);
-            req.tokenDecoded = decoded;
-            req.token = token;
-            return next();
-        }
-    }
-    return res.status(401).json({
-        errCode: -1,
-        message: "Unauthorized!",
-    })
 }
 
 const checkTokenJWT = (req, res, next) => {
@@ -104,5 +85,4 @@ module.exports = {
     verifyToken,
     checkTokenJWT,
     checkAdminPermission,
-    checkAccessToken
 }

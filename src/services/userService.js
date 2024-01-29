@@ -36,6 +36,94 @@ let hashUserPassword = (password) => {
     })
 }
 
+let handleLoginGoogleService = async (_id) => {
+    try {
+        const studentRole = await Role.findOne({ name: 'Student' });
+        if (!studentRole) {
+            return;
+        }
+        let user = {};
+        const userFromDB = await User.findOne({ _id: _id })
+            .select({
+                public_id: 0,
+                __v: 0,
+                createdAt: 0,
+                updatedAt: 0,
+                googleId: 0,
+                password: 0,
+            });
+        if (userFromDB) {
+            user = {
+                ...userFromDB._doc,
+                roleID: studentRole._id
+            };
+            await User.updateOne({ _id: user._id }, user);
+            user.roleID = studentRole._id;
+            user.role = studentRole.name;
+        }
+
+        const payload = { user };
+        const token = createTokenJWT(payload);
+
+        const response = {
+            errCode: 0,
+            message: "Ok",
+            data: {
+                access_token: token,
+                user,
+            }
+        };
+
+        return response;
+    } catch (e) {
+        throw e;
+    }
+}
+
+let handleLoginGoogleDepartmentService = async (user) => {
+    try {
+        const departmentRole = await Role.findOne({ name: 'Department' });
+        if (!departmentRole) {
+            return;
+        }
+        let user = {};
+        const userFromDB = await User.findOne({ _id: _id })
+            .select({
+                public_id: 0,
+                __v: 0,
+                createdAt: 0,
+                updatedAt: 0,
+                googleId: 0,
+                password: 0,
+            });
+        if (userFromDB) {
+            user = {
+                ...userFromDB._doc,
+                roleID: departmentRole._id
+            };
+            await User.updateOne({ _id: user._id }, user);
+            user.roleID = departmentRole._id;
+            user.role = departmentRole.name;
+        }
+
+        const payload = { user };
+        const token = createTokenJWT(payload);
+
+        const response = {
+            errCode: 0,
+            message: "Ok",
+            data: {
+                access_token: token,
+                user,
+            }
+        };
+
+        return response;
+    } catch (e) {
+        throw e;
+    }
+}
+
 let handleLoginService = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -86,15 +174,21 @@ let fetchAccountService = (_id) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = {};
-            const userFromDB = await User.findOne({ _id: _id }).select({ public_id: 0, __v: 0, createdAt: 0, updatedAt: 0 })
+            const userFromDB = await User.findOne({ _id: _id })
+                .select({
+                    public_id: 0,
+                    __v: 0,
+                    createdAt: 0,
+                    updatedAt: 0,
+                    googleId: 0,
+                    password: 0,
+                })
             if (userFromDB) {
                 const role = await getRole(userFromDB);
                 user = {
                     ...userFromDB._doc,
                     role: role.name
                 };
-                // console.log("check user", user);
-                delete user.password;
             }
             resolve(user);
         } catch (e) {
@@ -264,6 +358,38 @@ let changeUserPasswordService = (data) => {
     })
 }
 
+let changeUserFacultyService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data._id) {
+                resolve({
+                    errCode: 2,
+                    message: 'Missing required parameters!'
+                })
+            }
+            let user = await User.findOne({
+                _id: data._id
+            })
+            if (user) {
+                user.faculty = data.faculty;
+                user.student_id = data.student_id;
+                await User.updateOne({ _id: data._id }, user);
+                resolve({
+                    errCode: 0,
+                    message: `Ok`
+                });
+            } else {
+                resolve({
+                    errCode: 1,
+                    message: `The User not found!`
+                })
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 let deleteUserService = (_id) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -312,7 +438,7 @@ let getAllRoleService = () => {
     })
 }
 
-let fetchDepartmentUserService = () => {
+let fetchDepartmentUserService = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let departmentRole = await Role.findOne({ name: 'Department' });
@@ -327,10 +453,9 @@ let fetchDepartmentUserService = () => {
                         faculty: 0,
                         __v: 0,
                     });
-                // console.log("check users", users);
                 for (let i = 0; i < users.length; i++) {
                     const conversation = await Conversation.findOne({
-                        participants: { $in: [users[i]._id] }
+                        participants: { $all: [userId, users[i]._id] }
                     }).select({ __v: false, _id: false, isNewConversation: false, createdAt: false, updatedAt: false })
                     // console.log("check conversation", conversation);
                     if (conversation) {
@@ -369,6 +494,8 @@ let fetchDepartmentUserService = () => {
 }
 
 module.exports = {
+    handleLoginGoogleService: handleLoginGoogleService,
+    handleLoginGoogleDepartmentService: handleLoginGoogleDepartmentService,
     handleLoginService: handleLoginService,
     hashUserPassword: hashUserPassword,
     createUserService: createUserService,
@@ -377,6 +504,7 @@ module.exports = {
     fetchAccountService: fetchAccountService,
     updateUserService: updateUserService,
     changeUserPasswordService: changeUserPasswordService,
+    changeUserFacultyService: changeUserFacultyService,
     deleteUserService: deleteUserService,
     getAllRoleService: getAllRoleService,
     fetchDepartmentUserService: fetchDepartmentUserService
