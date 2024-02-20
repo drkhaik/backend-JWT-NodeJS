@@ -1,7 +1,6 @@
 import facultyService from '../services/facultyService';
 
 let createFaculty = async (req, res) => {
-    console.log("check req.body", req.body);
     try {
         let response = await facultyService.createFacultyService(req.body);
         return res.status(200).json(response);

@@ -32,7 +32,7 @@ const userSchema = new Schema({
     email_verified: {
         type: Number,
     },
-    student_id: {
+    studentId: {
         type: String,
     },
     faculty: {

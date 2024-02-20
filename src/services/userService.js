@@ -10,20 +10,26 @@ import _ from 'lodash';
 
 const salt = bcrypt.genSaltSync(10);
 
-let checkUserEmail = (userEmail) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let user = await User.findOne({ email: userEmail });
-            if (user) {
-                resolve(true)
-            } else {
-                resolve(false)
-            }
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
+// let checkUserEmail = (userEmail) => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+//             let user = await User.findOne({ email: userEmail });
+//             if (user) {
+//                 resolve(true)
+//             } else {
+//                 resolve(false)
+//             }
+//         } catch (e) {
+//             reject(e)
+//         }
+//     })
+// }
+
+let checkUserEmailOrStudentId = async (emailOrStudentId) => {
+    const email = await User.findOne({ email: emailOrStudentId });
+    const studentId = await User.findOne({ studentId: emailOrStudentId });
+    return email || studentId;
+};
 
 let hashUserPassword = (password) => {
     return new Promise(async (resolve, reject) => {
@@ -128,7 +134,7 @@ let handleLoginService = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
             let response = {}
-            let isExist = await checkUserEmail(email);
+            let isExist = await checkUserEmailOrStudentId(email);
             if (isExist) {
                 const userFromDB = await User.findOne({ email: email }).select({ public_id: 0, __v: 0, createdAt: 0, updatedAt: 0 });
                 if (userFromDB) {
@@ -159,9 +165,8 @@ let handleLoginService = (email, password) => {
                     response.message = "User not found";
                 }
             } else {
-                // return error
                 response.errCode = 1;
-                response.message = "Your Email isn't exist in your system. Plz try the other one!";
+                response.message = "Your Email or Student Id isn't exist in your system. Plz try the other one!";
             }
             resolve(response)
         } catch (e) {
@@ -372,7 +377,7 @@ let changeUserFacultyService = (data) => {
             })
             if (user) {
                 user.faculty = data.faculty;
-                user.student_id = data.student_id;
+                user.studentId = data.studentId;
                 await User.updateOne({ _id: data._id }, user);
                 resolve({
                     errCode: 0,
@@ -449,7 +454,7 @@ let fetchDepartmentUserService = (userId) => {
                         public_id: 0,
                         createdAt: 0,
                         updatedAt: 0,
-                        student_id: 0,
+                        studentId: 0,
                         faculty: 0,
                         __v: 0,
                     });

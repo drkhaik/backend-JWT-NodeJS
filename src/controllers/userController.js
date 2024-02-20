@@ -170,7 +170,6 @@ let changeUserPassword = async (req, res) => {
 }
 
 let changeFaculty = async (req, res) => {
-    console.log("check req.body", req.body);
     try {
         let response = await userService.changeUserFacultyService(req.body);
         return res.status(200).json(response);
