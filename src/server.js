@@ -12,6 +12,9 @@ import passport from "passport";
 import helmet from "helmet";
 import cookieSession from "cookie-session";
 
+// node src/server.js
+// nodemon --exec babel-node src/server.js
+
 const app = Express();
 const port = process.env.PORT || 6969;
 

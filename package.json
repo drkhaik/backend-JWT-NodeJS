@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec babel-node src/server.js",
-    "startProduction": "node src/server.js"
+    "start": "node --require @babel/register src/server.js",
+    "start:dev": "nodemon --exec babel-node src/server.js"
   },
   "author": "",
   "license": "ISC",
@@ -39,6 +39,7 @@
     "@babel/core": "^7.19.3",
     "@babel/node": "^7.19.1",
     "@babel/preset-env": "^7.19.3",
+    "@babel/register": "^7.23.7",
     "babel-plugin-react-html-attrs": "^3.0.5",
     "nodemon": "^2.0.22"
   },
