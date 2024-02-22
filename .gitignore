@@ -3,5 +3,6 @@
 /.idea
 .idea/
 .env
+/src
 public
 node_modules/*

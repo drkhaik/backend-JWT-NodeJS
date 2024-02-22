@@ -3,7 +3,10 @@
         "@babel/preset-env"
     ],
     "plugins": [
-        "react-html-attrs"
+        "react-html-attrs",
+        [
+            "@babel/plugin-transform-runtime"
+        ]
     ]
 }
 // cau hinh compiler
