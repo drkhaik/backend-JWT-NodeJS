@@ -1,5 +1,8 @@
 require('dotenv').config();
-require('@babel/register');
+require('@babel/register')({
+    extends: '../.babelrc',
+    ignore: [/node_modules/],
+})
 import Express from "express";
 import bodyParser from "body-parser";
 import viewEngine from "./config/viewEngine";
