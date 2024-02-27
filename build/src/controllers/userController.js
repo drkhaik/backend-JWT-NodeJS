@@ -199,9 +199,18 @@ var handleLogout = /*#__PURE__*/function () {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
           _context5.prev = 0;
-          res.clearCookie("jwt");
-          res.clearCookie("express:sess");
-          res.clearCookie("express:sess.sig");
+          res.clearCookie("jwt", {
+            httpOnly: true,
+            secure: true
+          });
+          res.clearCookie("express:sess", {
+            httpOnly: true,
+            secure: true
+          });
+          res.clearCookie("express:sess.sig", {
+            httpOnly: true,
+            secure: true
+          });
           res.clearCookie();
           return _context5.abrupt("return", res.status(200).json({
             errCode: 0,
