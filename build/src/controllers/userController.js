@@ -28,9 +28,10 @@ var handleLogin = /*#__PURE__*/function () {
           response = _context.sent;
           if (response !== null && response !== void 0 && (_response$data = response.data) !== null && _response$data !== void 0 && _response$data.access_token) {
             res.cookie("jwt", response.data.access_token, {
-              httpOnly: true,
+              httpOnly: false,
               maxAge: 60 * 60 * 1000,
-              secure: true
+              secure: true,
+              sameSite: 'none'
             });
           }
           // console.log("check response", response);
@@ -74,10 +75,13 @@ var handleGoogleLogin = /*#__PURE__*/function () {
         case 6:
           response = _context2.sent;
           if (response !== null && response !== void 0 && (_response$data2 = response.data) !== null && _response$data2 !== void 0 && _response$data2.access_token) {
-            res.cookie("jwt", response.data.access_token, {
-              httpOnly: true,
+            res.cookie("jwt", response.data.access_token,
+            // { httpOnly: true, maxAge: 60 * 60 * 1000, secure: true });
+            {
+              httpOnly: false,
               maxAge: 60 * 60 * 1000,
-              secure: true
+              secure: true,
+              sameSite: 'none'
             });
           }
           return _context2.abrupt("return", res.status(200).json(response));
@@ -119,10 +123,13 @@ var handleGoogleLoginDepartment = /*#__PURE__*/function () {
         case 6:
           response = _context3.sent;
           if (response !== null && response !== void 0 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.access_token) {
-            res.cookie("jwt", response.data.access_token, {
-              httpOnly: true,
+            res.cookie("jwt", response.data.access_token,
+            // { httpOnly: true, maxAge: 60 * 60 * 1000, secure: true });
+            {
+              httpOnly: false,
               maxAge: 60 * 60 * 1000,
-              secure: true
+              secure: true,
+              sameSite: 'none'
             });
           }
           return _context3.abrupt("return", res.status(200).json(response));
