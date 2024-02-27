@@ -28,7 +28,7 @@ var handleLogin = /*#__PURE__*/function () {
           response = _context.sent;
           if (response !== null && response !== void 0 && (_response$data = response.data) !== null && _response$data !== void 0 && _response$data.access_token) {
             res.cookie("jwt", response.data.access_token, {
-              httpOnly: false,
+              httpOnly: true,
               maxAge: 60 * 60 * 1000,
               secure: true,
               sameSite: 'none'
@@ -78,7 +78,7 @@ var handleGoogleLogin = /*#__PURE__*/function () {
             res.cookie("jwt", response.data.access_token,
             // { httpOnly: true, maxAge: 60 * 60 * 1000, secure: true });
             {
-              httpOnly: false,
+              httpOnly: true,
               maxAge: 60 * 60 * 1000,
               secure: true,
               sameSite: 'none'
@@ -126,7 +126,7 @@ var handleGoogleLoginDepartment = /*#__PURE__*/function () {
             res.cookie("jwt", response.data.access_token,
             // { httpOnly: true, maxAge: 60 * 60 * 1000, secure: true });
             {
-              httpOnly: false,
+              httpOnly: true,
               maxAge: 60 * 60 * 1000,
               secure: true,
               sameSite: 'none'
@@ -202,22 +202,23 @@ var handleLogout = /*#__PURE__*/function () {
           res.clearCookie("jwt");
           res.clearCookie("express:sess");
           res.clearCookie("express:sess.sig");
+          res.clearCookie();
           return _context5.abrupt("return", res.status(200).json({
             errCode: 0,
             message: "Ok"
           }));
-        case 7:
-          _context5.prev = 7;
+        case 8:
+          _context5.prev = 8;
           _context5.t0 = _context5["catch"](0);
           return _context5.abrupt("return", res.status(500).json({
             errCode: -1,
             message: "Error from server..."
           }));
-        case 10:
+        case 11:
         case "end":
           return _context5.stop();
       }
-    }, _callee5, null, [[0, 7]]);
+    }, _callee5, null, [[0, 8]]);
   }));
   return function handleLogout(_x9, _x10) {
     return _ref5.apply(this, arguments);
