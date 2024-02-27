@@ -15,7 +15,6 @@ require("./middleware/passportGoogleSSO");
 var _passport = _interopRequireDefault(require("passport"));
 var _helmet = _interopRequireDefault(require("helmet"));
 var _cookieSession = _interopRequireDefault(require("cookie-session"));
-var _cors2 = _interopRequireDefault(require("cors"));
 require('@babel/register');
 require('dotenv').config();
 // node src/server.js

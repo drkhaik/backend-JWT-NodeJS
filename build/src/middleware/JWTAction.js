@@ -5,7 +5,6 @@ var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 require('dotenv').config();
 var nonSecurePaths = ['/', '/logout', '/login', '/auth/google', '/auth/google/callback', '/auth/student', '/auth/department'];
 var createTokenJWT = function createTokenJWT(payload) {
-  // let payload = { name: 'drkhaik', address: 'ha noi' };
   var key = process.env.JWT_SECRET;
   var expiresIn = {
     expiresIn: process.env.JWT_EXPIRES_IN

@@ -31,7 +31,7 @@ var handleLogin = /*#__PURE__*/function () {
               httpOnly: true,
               maxAge: 60 * 60 * 1000,
               secure: true,
-              sameSite: 'false'
+              sameSite: 'none'
             });
           }
           // console.log("check response", response);
@@ -81,7 +81,7 @@ var handleGoogleLogin = /*#__PURE__*/function () {
               httpOnly: true,
               maxAge: 60 * 60 * 1000,
               secure: true,
-              sameSite: 'false'
+              sameSite: 'none'
             });
           }
           return _context2.abrupt("return", res.status(200).json(response));
@@ -129,7 +129,7 @@ var handleGoogleLoginDepartment = /*#__PURE__*/function () {
               httpOnly: true,
               maxAge: 60 * 60 * 1000,
               secure: true,
-              sameSite: 'false'
+              sameSite: 'none'
             });
           }
           return _context3.abrupt("return", res.status(200).json(response));

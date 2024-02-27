@@ -9,7 +9,7 @@ var User = require('../models/User');
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK_URL,
+  callbackURL: "".concat(process.env.URL_BACKEND, "/api/v1/auth/google/callback"),
   passReqToCallback: true
 }, /*#__PURE__*/function () {
   var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, accessToken, refreshToken, profile, done) {
