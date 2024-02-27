@@ -27,9 +27,7 @@ var port = process.env.PORT || 6969;
 
 // config Cors
 (0, _cors["default"])(app);
-app.use((0, _cors2["default"])({
-  credentials: true
-}));
+// app.use(cors({ credentials: true }))
 
 //config view engine
 (0, _viewEngine["default"])(app);
