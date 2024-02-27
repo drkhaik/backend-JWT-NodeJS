@@ -23,8 +23,7 @@ router.get("/auth/google/callback", _passport["default"].authenticate("google", 
   failureRedirect: "".concat(process.env.URL_FRONTEND, "/login/error"),
   successRedirect: "".concat(process.env.URL_FRONTEND, "/login/success")
 }), function (req, res) {
-  console.log("User: ", req.user);
-  res.send("Thank you for signing in!");
+  res.send("Thank you for sign in!");
 });
 router.get('/auth/student', _userController["default"].handleGoogleLogin);
 router.get('/auth/department', _userController["default"].handleGoogleLoginDepartment);

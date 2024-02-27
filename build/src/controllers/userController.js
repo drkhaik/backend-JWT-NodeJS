@@ -60,20 +60,19 @@ var handleGoogleLogin = /*#__PURE__*/function () {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
           user = req.user;
-          console.log("check req", req);
           if (user) {
-            _context2.next = 4;
+            _context2.next = 3;
             break;
           }
           return _context2.abrupt("return", res.status(200).json({
             errCode: 1,
             message: 'Missing input parameters!'
           }));
-        case 4:
-          _context2.prev = 4;
-          _context2.next = 7;
+        case 3:
+          _context2.prev = 3;
+          _context2.next = 6;
           return _userService["default"].handleLoginGoogleService(user._id);
-        case 7:
+        case 6:
           response = _context2.sent;
           if (response !== null && response !== void 0 && (_response$data2 = response.data) !== null && _response$data2 !== void 0 && _response$data2.access_token) {
             res.cookie("jwt", response.data.access_token,
@@ -86,17 +85,17 @@ var handleGoogleLogin = /*#__PURE__*/function () {
             });
           }
           return _context2.abrupt("return", res.status(200).json(response));
-        case 12:
-          _context2.prev = 12;
-          _context2.t0 = _context2["catch"](4);
+        case 11:
+          _context2.prev = 11;
+          _context2.t0 = _context2["catch"](3);
           return _context2.abrupt("return", res.status(200).json({
             errCode: -1
           }));
-        case 15:
+        case 14:
         case "end":
           return _context2.stop();
       }
-    }, _callee2, null, [[4, 12]]);
+    }, _callee2, null, [[3, 11]]);
   }));
   return function handleGoogleLogin(_x3, _x4) {
     return _ref2.apply(this, arguments);

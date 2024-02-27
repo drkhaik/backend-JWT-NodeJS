@@ -15,6 +15,7 @@ require("./middleware/passportGoogleSSO");
 var _passport = _interopRequireDefault(require("passport"));
 var _helmet = _interopRequireDefault(require("helmet"));
 var _cookieSession = _interopRequireDefault(require("cookie-session"));
+var _expressSession = _interopRequireDefault(require("express-session"));
 require('@babel/register');
 require('dotenv').config();
 // node src/server.js
@@ -45,9 +46,18 @@ app.use(_bodyParser["default"].urlencoded({
 // config cookie parser
 app.use((0, _cookieParser["default"])());
 app.use((0, _helmet["default"])());
-app.use((0, _cookieSession["default"])({
-  maxAge: 60 * 60 * 1000,
-  keys: [process.env.JWT_SECRET]
+
+// app.use(
+//     cookieSession({
+//         maxAge: 60 * 60 * 1000,
+//         keys: [process.env.JWT_SECRET],
+//     })
+// );
+app.use(_express["default"].json());
+app.use((0, _expressSession["default"])({
+  secret: process.env.JWT_SECRET,
+  resave: false,
+  saveUninitialized: true
 }));
 app.use(_passport["default"].initialize());
 app.use(_passport["default"].session());
