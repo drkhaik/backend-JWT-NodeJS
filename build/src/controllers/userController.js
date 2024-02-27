@@ -31,7 +31,7 @@ var handleLogin = /*#__PURE__*/function () {
               httpOnly: true,
               maxAge: 60 * 60 * 1000,
               secure: true,
-              sameSite: 'none'
+              sameSite: 'false'
             });
           }
           // console.log("check response", response);
@@ -81,7 +81,7 @@ var handleGoogleLogin = /*#__PURE__*/function () {
               httpOnly: true,
               maxAge: 60 * 60 * 1000,
               secure: true,
-              sameSite: 'none'
+              sameSite: 'false'
             });
           }
           return _context2.abrupt("return", res.status(200).json(response));
@@ -129,7 +129,7 @@ var handleGoogleLoginDepartment = /*#__PURE__*/function () {
               httpOnly: true,
               maxAge: 60 * 60 * 1000,
               secure: true,
-              sameSite: 'none'
+              sameSite: 'false'
             });
           }
           return _context3.abrupt("return", res.status(200).json(response));
@@ -211,23 +211,22 @@ var handleLogout = /*#__PURE__*/function () {
             httpOnly: true,
             secure: true
           });
-          res.clearCookie();
           return _context5.abrupt("return", res.status(200).json({
             errCode: 0,
             message: "Ok"
           }));
-        case 8:
-          _context5.prev = 8;
+        case 7:
+          _context5.prev = 7;
           _context5.t0 = _context5["catch"](0);
           return _context5.abrupt("return", res.status(500).json({
             errCode: -1,
             message: "Error from server..."
           }));
-        case 11:
+        case 10:
         case "end":
           return _context5.stop();
       }
-    }, _callee5, null, [[0, 8]]);
+    }, _callee5, null, [[0, 7]]);
   }));
   return function handleLogout(_x9, _x10) {
     return _ref5.apply(this, arguments);
