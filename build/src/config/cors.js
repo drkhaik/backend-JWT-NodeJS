@@ -7,7 +7,6 @@ exports["default"] = void 0;
 require('dotenv').config();
 var corsConfig = function corsConfig(app) {
   app.use(function (req, res, next) {
-    // console.log(req.method);
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', process.env.URL_FRONTEND);
 
