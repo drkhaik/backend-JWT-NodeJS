@@ -44,7 +44,14 @@ passport.use(new GoogleStrategy({
           return user.save();
         case 10:
           console.log("check user passport google SSO", user);
-          return _context.abrupt("return", done(null, user));
+          req.login(user, function (err) {
+            if (err) {
+              return done(err, null);
+            }
+            return done(null, user);
+          });
+          _context.next = 17;
+          break;
         case 14:
           _context.prev = 14;
           _context.t0 = _context["catch"](2);
