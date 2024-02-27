@@ -43,16 +43,17 @@ passport.use(new GoogleStrategy({
           _context.next = 10;
           return user.save();
         case 10:
+          console.log("check user passport google SSO", user);
           return _context.abrupt("return", done(null, user));
-        case 13:
-          _context.prev = 13;
+        case 14:
+          _context.prev = 14;
           _context.t0 = _context["catch"](2);
           return _context.abrupt("return", done(_context.t0, null));
-        case 16:
+        case 17:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[2, 13]]);
+    }, _callee, null, [[2, 14]]);
   }));
   return function (_x, _x2, _x3, _x4, _x5) {
     return _ref.apply(this, arguments);
