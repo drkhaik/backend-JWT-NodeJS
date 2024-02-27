@@ -69,7 +69,7 @@ passport.use(new GoogleStrategy({
 // });
 
 passport.serializeUser(function (user, cb) {
-  console.log("Serializing user:", user);
+  // console.log("Serializing user:", user);
   cb(null, user._id);
 });
 passport.deserializeUser( /*#__PURE__*/function () {
@@ -85,6 +85,7 @@ passport.deserializeUser( /*#__PURE__*/function () {
           user = _context2.sent;
           console.log("DeSerialized user", user);
           if (user) {
+            req.user = user;
             cb(null, user);
           } else {
             cb(new Error('User not found'), null);
