@@ -85,7 +85,6 @@ passport.deserializeUser( /*#__PURE__*/function () {
           user = _context2.sent;
           console.log("DeSerialized user", user);
           if (user) {
-            req.user = user;
             cb(null, user);
           } else {
             cb(new Error('User not found'), null);

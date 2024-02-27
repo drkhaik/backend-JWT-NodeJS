@@ -39,6 +39,7 @@ app.use(_bodyParser["default"].urlencoded({
   limit: '50mb',
   extended: true
 }));
+app.set("trust proxy", 1);
 
 // config cookie parser
 app.use((0, _cookieParser["default"])());
@@ -56,7 +57,12 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   cookie: {
-    maxAge: 60 * 60 * 1000
+    secure: true,
+    // Set to true if you're using HTTPS
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60,
+    // 1 day
+    sameSite: "none"
   }
 }));
 
