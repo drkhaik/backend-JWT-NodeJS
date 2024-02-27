@@ -44,14 +44,7 @@ passport.use(new GoogleStrategy({
           return user.save();
         case 10:
           console.log("check user passport google SSO", user);
-          req.login(user, function (err) {
-            if (err) {
-              return done(err, null);
-            }
-            return done(null, user);
-          });
-          _context.next = 17;
-          break;
+          return _context.abrupt("return", done(null, user));
         case 14:
           _context.prev = 14;
           _context.t0 = _context["catch"](2);
@@ -66,31 +59,50 @@ passport.use(new GoogleStrategy({
     return _ref.apply(this, arguments);
   };
 }()));
-passport.serializeUser(function (user, done) {
-  done(null, user);
-});
-passport.deserializeUser(function (user, done) {
-  done(null, user);
-});
 
-// passport.serializeUser((user, cb) => {
-//   console.log("Serializing user:", user);
-//   cb(null, user._id);
+// passport.serializeUser((user, done) => {
+//   done(null, user);
+// })
+
+// passport.deserializeUser((user, done) => {
+//   done(null, user);
 // });
 
-// passport.deserializeUser(async (_id, cb) => {
-//   try {
-//     const user = await User.findById(_id);
-//     console.log("DeSerialized user", user);
-//     if (user) {
-//       cb(null, user);
-//     } else {
-//       cb(new Error('User not found'), null);
-//     }
-//   } catch (err) {
-//     console.log("Error deserializing", err);
-//     cb(err, null);
-//   }
-// });
-
-// module.exports = passport;
+passport.serializeUser(function (user, cb) {
+  console.log("Serializing user:", user);
+  cb(null, user._id);
+});
+passport.deserializeUser( /*#__PURE__*/function () {
+  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(_id, cb) {
+    var user;
+    return _regenerator["default"].wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          _context2.prev = 0;
+          _context2.next = 3;
+          return User.findById(_id);
+        case 3:
+          user = _context2.sent;
+          console.log("DeSerialized user", user);
+          if (user) {
+            cb(null, user);
+          } else {
+            cb(new Error('User not found'), null);
+          }
+          _context2.next = 12;
+          break;
+        case 8:
+          _context2.prev = 8;
+          _context2.t0 = _context2["catch"](0);
+          console.log("Error deserializing", _context2.t0);
+          cb(_context2.t0, null);
+        case 12:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2, null, [[0, 8]]);
+  }));
+  return function (_x6, _x7) {
+    return _ref2.apply(this, arguments);
+  };
+}());

@@ -15,13 +15,10 @@ require("./middleware/passportGoogleSSO");
 var _passport = _interopRequireDefault(require("passport"));
 var _helmet = _interopRequireDefault(require("helmet"));
 var _cookieSession = _interopRequireDefault(require("cookie-session"));
-var _expressSession = _interopRequireDefault(require("express-session"));
 require('@babel/register');
 require('dotenv').config();
-// node src/server.js
-// nodemon --exec babel-node src/server.js
-// "build": "webpack --mode development --watch",
-
+var session = require('express-session');
+var MongoDBStore = require('connect-mongodb-session')(session);
 var app = (0, _express["default"])();
 var port = process.env.PORT || 6969;
 
@@ -46,6 +43,22 @@ app.use(_bodyParser["default"].urlencoded({
 // config cookie parser
 app.use((0, _cookieParser["default"])());
 app.use((0, _helmet["default"])());
+var store = new MongoDBStore({
+  uri: process.env.PRODUCTION_DATABASE_URI,
+  collection: 'sessions'
+});
+store.on('error', function (error) {
+  console.log(error);
+});
+app.use(session({
+  secret: process.env.JWT_SECRET,
+  store: store,
+  resave: true,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 8 * 60 * 60 * 1000
+  }
+}));
 
 // app.use(
 //     cookieSession({
@@ -53,12 +66,7 @@ app.use((0, _helmet["default"])());
 //         keys: [process.env.JWT_SECRET],
 //     })
 // );
-app.use(_express["default"].json());
-app.use((0, _expressSession["default"])({
-  secret: process.env.JWT_SECRET,
-  resave: false,
-  saveUninitialized: true
-}));
+
 app.use(_passport["default"].initialize());
 app.use(_passport["default"].session());
 
