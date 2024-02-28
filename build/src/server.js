@@ -59,11 +59,20 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   cookie: {
-    // secure: true, // Set to true if you're using HTTPS
+    secure: true,
+    // Set to true if you're using HTTPS
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 // 1 day
-    // sameSite: "none",
+    maxAge: 1000 * 60 * 60,
+    // 1 day
+    sameSite: "none"
+    // path: '/',
+    // domain: process.env.URL_BACKEND,
   }
+}));
+app.use((0, _cors2["default"])({
+  origin: process.env.URL_FRONTEND,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 
 // app.use(
