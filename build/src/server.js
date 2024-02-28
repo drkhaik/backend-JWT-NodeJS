@@ -15,6 +15,7 @@ require("./middleware/passportGoogleSSO");
 var _passport = _interopRequireDefault(require("passport"));
 var _helmet = _interopRequireDefault(require("helmet"));
 var _cookieSession = _interopRequireDefault(require("cookie-session"));
+var _cors2 = _interopRequireDefault(require("cors"));
 require('@babel/register');
 require('dotenv').config();
 var session = require('express-session');
@@ -24,7 +25,7 @@ var port = process.env.PORT || 6969;
 
 // config Cors
 (0, _cors["default"])(app);
-// app.use(cors({ credentials: true }))
+// app.use(cors({ credentials: true, origin: process.env.URL_FRONTEND, methods: ['GET', 'POST', 'PUT', 'DELETE'] }));
 
 //config view engine
 (0, _viewEngine["default"])(app);
@@ -39,7 +40,8 @@ app.use(_bodyParser["default"].urlencoded({
   limit: '50mb',
   extended: true
 }));
-app.set("trust proxy", 1);
+
+// app.set("trust proxy", 1);
 
 // config cookie parser
 app.use((0, _cookieParser["default"])());
@@ -57,12 +59,10 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   cookie: {
-    secure: true,
-    // Set to true if you're using HTTPS
+    // secure: true, // Set to true if you're using HTTPS
     httpOnly: true,
-    maxAge: 1000 * 60 * 60,
-    // 1 day
-    sameSite: "none"
+    maxAge: 1000 * 60 * 60 // 1 day
+    // sameSite: "none",
   }
 }));
 

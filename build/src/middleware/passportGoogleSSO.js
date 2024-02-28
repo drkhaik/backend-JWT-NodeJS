@@ -44,64 +44,42 @@ passport.use(new GoogleStrategy({
           return user.save();
         case 10:
           console.log("check user passport google SSO", user);
-          req.user = user;
           return _context.abrupt("return", done(null, user));
-        case 15:
-          _context.prev = 15;
+        case 14:
+          _context.prev = 14;
           _context.t0 = _context["catch"](2);
           return _context.abrupt("return", done(_context.t0, null));
-        case 18:
+        case 17:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[2, 15]]);
+    }, _callee, null, [[2, 14]]);
   }));
   return function (_x, _x2, _x3, _x4, _x5) {
     return _ref.apply(this, arguments);
   };
 }()));
+passport.serializeUser(function (user, done) {
+  done(null, user);
+});
+passport.deserializeUser(function (user, done) {
+  done(null, user);
+});
 
-// passport.serializeUser((user, done) => {
-//   done(null, user);
-// })
-
-// passport.deserializeUser((user, done) => {
-//   done(null, user);
+// passport.serializeUser((user, cb) => {
+//   cb(null, user._id);
 // });
 
-passport.serializeUser(function (user, cb) {
-  cb(null, user._id);
-});
-passport.deserializeUser( /*#__PURE__*/function () {
-  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(_id, cb) {
-    var user;
-    return _regenerator["default"].wrap(function _callee2$(_context2) {
-      while (1) switch (_context2.prev = _context2.next) {
-        case 0:
-          _context2.prev = 0;
-          _context2.next = 3;
-          return User.findById(_id);
-        case 3:
-          user = _context2.sent;
-          if (user) {
-            cb(null, user);
-          } else {
-            cb(new Error('User not found'), null);
-          }
-          _context2.next = 11;
-          break;
-        case 7:
-          _context2.prev = 7;
-          _context2.t0 = _context2["catch"](0);
-          console.log("Error deserializing", _context2.t0);
-          cb(_context2.t0, null);
-        case 11:
-        case "end":
-          return _context2.stop();
-      }
-    }, _callee2, null, [[0, 7]]);
-  }));
-  return function (_x6, _x7) {
-    return _ref2.apply(this, arguments);
-  };
-}());
+// passport.deserializeUser(async (_id, cb) => {
+//   try {
+//     const user = await User.findById(_id);
+//     if (user) {
+//       cb(null, user);
+//     } else {
+//       cb(new Error('User not found'), null);
+//     }
+//   } catch (err) {
+//     console.log("Error deserializing", err);
+//     cb(err, null);
+//   }
+// });
