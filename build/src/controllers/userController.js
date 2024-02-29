@@ -80,6 +80,8 @@ var handleGoogleLogin = /*#__PURE__*/function () {
             res.cookie("jwt", response.data.access_token,
             // { httpOnly: true, maxAge: 60 * 60 * 1000, secure: true });
             {
+              withCredentials: true,
+              path: "/",
               httpOnly: true,
               maxAge: 60 * 60 * 1000,
               secure: true,
