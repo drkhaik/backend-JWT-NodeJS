@@ -92,19 +92,19 @@ var hashUserPassword = function hashUserPassword(password) {
   }());
 };
 var handleLoginGoogleService = /*#__PURE__*/function () {
-  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(_id) {
-    var studentRole, user, userFromDB, payload, token, response;
+  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(_id, type) {
+    var role, user, userFromDB, payload, token, response;
     return _regenerator["default"].wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
           _context3.prev = 0;
           _context3.next = 3;
           return _Role["default"].findOne({
-            name: 'Student'
+            name: type
           });
         case 3:
-          studentRole = _context3.sent;
-          if (studentRole) {
+          role = _context3.sent;
+          if (role) {
             _context3.next = 6;
             break;
           }
@@ -129,15 +129,15 @@ var handleLoginGoogleService = /*#__PURE__*/function () {
             break;
           }
           user = _objectSpread(_objectSpread({}, userFromDB._doc), {}, {
-            roleID: studentRole._id
+            roleID: role._id
           });
           _context3.next = 14;
           return _User["default"].updateOne({
             _id: user._id
           }, user);
         case 14:
-          user.roleID = studentRole._id;
-          user.role = studentRole.name;
+          user.roleID = role._id;
+          user.role = role.name;
         case 16:
           payload = {
             user: user
@@ -162,7 +162,7 @@ var handleLoginGoogleService = /*#__PURE__*/function () {
       }
     }, _callee3, null, [[0, 22]]);
   }));
-  return function handleLoginGoogleService(_x4) {
+  return function handleLoginGoogleService(_x4, _x5) {
     return _ref3.apply(this, arguments);
   };
 }();
@@ -237,7 +237,7 @@ var handleLoginGoogleDepartmentService = /*#__PURE__*/function () {
       }
     }, _callee4, null, [[0, 22]]);
   }));
-  return function handleLoginGoogleDepartmentService(_x5) {
+  return function handleLoginGoogleDepartmentService(_x6) {
     return _ref4.apply(this, arguments);
   };
 }();
@@ -329,7 +329,7 @@ var handleLoginService = function handleLoginService(email, password) {
         }
       }, _callee5, null, [[0, 40]]);
     }));
-    return function (_x6, _x7) {
+    return function (_x7, _x8) {
       return _ref5.apply(this, arguments);
     };
   }());
@@ -381,7 +381,7 @@ var fetchAccountService = function fetchAccountService(_id) {
         }
       }, _callee6, null, [[0, 13]]);
     }));
-    return function (_x8, _x9) {
+    return function (_x9, _x10) {
       return _ref6.apply(this, arguments);
     };
   }());
@@ -417,7 +417,7 @@ var fetchAllUser = function fetchAllUser() {
         }
       }, _callee7, null, [[0, 7]]);
     }));
-    return function (_x10, _x11) {
+    return function (_x11, _x12) {
       return _ref7.apply(this, arguments);
     };
   }());
@@ -455,7 +455,7 @@ var getUserById = function getUserById(id) {
         }
       }, _callee8, null, [[0, 7]]);
     }));
-    return function (_x12, _x13) {
+    return function (_x13, _x14) {
       return _ref8.apply(this, arguments);
     };
   }());
@@ -535,7 +535,7 @@ var createUserService = function createUserService(data) {
         }
       }, _callee9, null, [[0, 17]]);
     }));
-    return function (_x14, _x15) {
+    return function (_x15, _x16) {
       return _ref9.apply(this, arguments);
     };
   }());
@@ -600,7 +600,7 @@ var updateUserService = function updateUserService(data) {
         }
       }, _callee10, null, [[0, 20]]);
     }));
-    return function (_x16, _x17) {
+    return function (_x17, _x18) {
       return _ref10.apply(this, arguments);
     };
   }());
@@ -663,7 +663,7 @@ var changeUserPasswordService = function changeUserPasswordService(data) {
         }
       }, _callee11, null, [[0, 18]]);
     }));
-    return function (_x18, _x19) {
+    return function (_x19, _x20) {
       return _ref11.apply(this, arguments);
     };
   }());
@@ -723,7 +723,7 @@ var changeUserFacultyService = function changeUserFacultyService(data) {
         }
       }, _callee12, null, [[0, 16]]);
     }));
-    return function (_x20, _x21) {
+    return function (_x21, _x22) {
       return _ref12.apply(this, arguments);
     };
   }());
@@ -788,7 +788,7 @@ var deleteUserService = function deleteUserService(_id) {
         }
       }, _callee13, null, [[0, 17]]);
     }));
-    return function (_x22, _x23) {
+    return function (_x23, _x24) {
       return _ref13.apply(this, arguments);
     };
   }());
@@ -826,7 +826,7 @@ var getAllRoleService = function getAllRoleService() {
         }
       }, _callee14, null, [[0, 7]]);
     }));
-    return function (_x24, _x25) {
+    return function (_x25, _x26) {
       return _ref14.apply(this, arguments);
     };
   }());
@@ -941,7 +941,7 @@ var fetchDepartmentUserService = function fetchDepartmentUserService(userId) {
         }
       }, _callee15, null, [[0, 29]]);
     }));
-    return function (_x26, _x27) {
+    return function (_x27, _x28) {
       return _ref15.apply(this, arguments);
     };
   }());

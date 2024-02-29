@@ -3,7 +3,7 @@
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 require('dotenv').config();
-var nonSecurePaths = ['/', '/logout', '/login', '/auth/google', '/auth/google/callback', '/auth/student', '/auth/department'];
+var nonSecurePaths = ['/', '/logout', '/login', '/auth/google', '/auth/google/callback', '/google-login'];
 var createTokenJWT = function createTokenJWT(payload) {
   var key = process.env.JWT_SECRET;
   var expiresIn = {

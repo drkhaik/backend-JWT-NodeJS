@@ -46,6 +46,9 @@ app.use(_bodyParser["default"].urlencoded({
 // config cookie parser
 app.use((0, _cookieParser["default"])());
 app.use((0, _helmet["default"])());
+
+// app.use(cors({ origin: process.env.APP_URL, allowedHeaders: ['Content-Type', 'Authorization'], credentials: true }))
+
 var store = new MongoDBStore({
   uri: process.env.PRODUCTION_DATABASE_URI,
   collection: 'sessions'
@@ -65,14 +68,7 @@ app.use(session({
     maxAge: 1000 * 60 * 60,
     // 1 day
     sameSite: "none"
-    // path: '/',
-    // domain: process.env.URL_BACKEND,
   }
-}));
-app.use((0, _cors2["default"])({
-  origin: process.env.URL_FRONTEND,
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
 }));
 
 // app.use(

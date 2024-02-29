@@ -25,8 +25,7 @@ router.get("/auth/google/callback", _passport["default"].authenticate("google", 
 }), function (req, res) {
   res.send("Thank you for sign in!");
 });
-router.get('/auth/student', _userController["default"].handleGoogleLogin);
-router.get('/auth/department', _userController["default"].handleGoogleLoginDepartment);
+router.post('/google-login', _userController["default"].handleGoogleLogin);
 router.get('/users', _JWTAction.checkAdminPermission, _userController["default"].fetchAllUser);
 router.get('/user/:id', _JWTAction.checkAdminPermission, _userController["default"].fetchUser);
 router.post('/user', _userController["default"].createNewUser);
