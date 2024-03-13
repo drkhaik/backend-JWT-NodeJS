@@ -33,7 +33,7 @@ var fetchMessageHistory = /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }();
-var fetchMoreMessage = /*#__PURE__*/function () {
+var fetchMoreMessageHistoryByLastMessageId = /*#__PURE__*/function () {
   var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res) {
     var response;
     return _regenerator["default"].wrap(function _callee2$(_context2) {
@@ -58,11 +58,11 @@ var fetchMoreMessage = /*#__PURE__*/function () {
       }
     }, _callee2, null, [[0, 7]]);
   }));
-  return function fetchMoreMessage(_x3, _x4) {
+  return function fetchMoreMessageHistoryByLastMessageId(_x3, _x4) {
     return _ref2.apply(this, arguments);
   };
 }();
 module.exports = {
   fetchMessageHistory: fetchMessageHistory,
-  fetchMoreMessage: fetchMoreMessage
+  fetchMoreMessageHistoryByLastMessageId: fetchMoreMessageHistoryByLastMessageId
 };

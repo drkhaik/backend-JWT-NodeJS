@@ -9,5 +9,5 @@ var _express = _interopRequireDefault(require("express"));
 var _messageController = _interopRequireDefault(require("../controllers/messageController"));
 var router = _express["default"].Router();
 router.get('/message/history/:id', _messageController["default"].fetchMessageHistory);
-router.post('/message/history', _messageController["default"].fetchMoreMessage);
+router.post('/message/history', _messageController["default"].fetchMoreMessageHistoryByLastMessageId);
 var _default = exports["default"] = router;
