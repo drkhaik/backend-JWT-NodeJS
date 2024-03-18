@@ -1,6 +1,7 @@
 import Post from "../models/Post";
 
 const limitNumberOfPost = 5;
+const limitNumberOfFacultyPost = 2;
 let createPostService = async (data) => {
     // console.log("check data", data);
     return new Promise(async (resolve, reject) => {
@@ -30,11 +31,58 @@ let createPostService = async (data) => {
 let fetchAllPostService = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            let posts = await Post.find({}, {
-                password: 0
-            }).populate('author', 'name image')
+            let posts = await Post.find({}).populate('author', 'name image')
                 .sort({ createdAt: -1 })
                 .limit(limitNumberOfPost)
+                .select({
+                    __v: 0,
+                    __t: 0,
+                });
+            resolve({
+                errCode: 0,
+                message: "OK",
+                data: posts
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+let fetchPostsByFacultyService = (authorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let posts = await Post.find({
+                author: authorId
+            })
+                .populate('author', 'name image')
+                .sort({ createdAt: -1 })
+                .limit(limitNumberOfFacultyPost)
+                .select({
+                    __v: 0,
+                    __t: 0,
+                });
+            resolve({
+                errCode: 0,
+                message: "OK",
+                data: posts
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+let fetchMorePostsByFacultyService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let posts = await Post.find({
+                author: data.authorId,
+                _id: { $lt: data.lastPostId }
+            })
+                .populate('author', 'name image')
+                .sort({ createdAt: -1 })
+                .limit(limitNumberOfFacultyPost)
                 .select({
                     __v: 0,
                     __t: 0,
@@ -136,6 +184,8 @@ let deletePostService = async (_id) => {
 module.exports = {
     createPostService: createPostService,
     fetchAllPostService: fetchAllPostService,
+    fetchPostsByFacultyService: fetchPostsByFacultyService,
+    fetchMorePostsByFacultyService: fetchMorePostsByFacultyService,
     updatePostService: updatePostService,
     deletePostService: deletePostService,
     fetchMorePostService: fetchMorePostService

@@ -24,6 +24,30 @@ let fetchAllPost = async (req, res) => {
     }
 }
 
+let fetchPostsByFaculty = async (req, res) => {
+    try {
+        let response = await postService.fetchPostsByFacultyService(req.params.id);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from server...",
+        })
+    }
+}
+
+let fetchMorePostsByFaculty = async (req, res) => {
+    try {
+        let response = await postService.fetchMorePostsByFacultyService(req.body);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from server...",
+        })
+    }
+}
+
 let updatePost = async (req, res) => {
     try {
         let response = await postService.updatePostService(req.body);
@@ -64,6 +88,8 @@ let fetchMorePost = async (req, res) => {
 module.exports = {
     createPost,
     fetchAllPost,
+    fetchPostsByFaculty,
+    fetchMorePostsByFaculty,
     updatePost,
     deletePost,
     fetchMorePost,

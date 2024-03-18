@@ -100,7 +100,7 @@ let handleLoginService = (email, password) => {
                         let user = {
                             ...userFromDB._doc,
                         };
-                        user.role = role.name
+                        user.role = role.name;
                         delete user.password;
 
                         let payload = { user };
@@ -188,6 +188,12 @@ let getUserById = (id) => {
             let user = await User.findOne({
                 // raw: true,
                 _id: id
+            }).select({
+                __v: 0,
+                createdAt: 0,
+                updatedAt: 0,
+                email_verified: 0,
+                password: 0,
             });
             // users.get({ plain: true });
             resolve({

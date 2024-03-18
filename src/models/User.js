@@ -32,6 +32,9 @@ const userSchema = new Schema({
     email_verified: {
         type: Number,
     },
+    description: {
+        type: String,
+    },
     studentId: {
         type: String,
     },
