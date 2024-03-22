@@ -24,6 +24,18 @@ let fetchAllPost = async (req, res) => {
     }
 }
 
+let fetchDataPostForStat = async (req, res) => {
+    try {
+        let response = await postService.fetchAllPostForStatService();
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from server...",
+        })
+    }
+}
+
 let fetchPostsByFaculty = async (req, res) => {
     try {
         let response = await postService.fetchPostsByFacultyService(req.params.id);
@@ -93,4 +105,5 @@ module.exports = {
     updatePost,
     deletePost,
     fetchMorePost,
+    fetchDataPostForStat,
 }

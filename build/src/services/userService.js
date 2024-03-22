@@ -422,7 +422,7 @@ var fetchAllUser = function fetchAllUser() {
     };
   }());
 };
-var getUserById = function getUserById(id) {
+var fetchUserById = function fetchUserById(id) {
   return new Promise( /*#__PURE__*/function () {
     var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(resolve, reject) {
       var user;
@@ -953,7 +953,7 @@ module.exports = {
   hashUserPassword: hashUserPassword,
   createUserService: createUserService,
   fetchAllUser: fetchAllUser,
-  getUserById: getUserById,
+  fetchUserById: fetchUserById,
   fetchAccountService: fetchAccountService,
   updateUserService: updateUserService,
   changeUserPasswordService: changeUserPasswordService,

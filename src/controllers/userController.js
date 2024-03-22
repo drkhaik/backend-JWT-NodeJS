@@ -103,9 +103,22 @@ let fetchAllUser = async (req, res) => {
     }
 }
 
+let fetchDataUserForStat = async (req, res) => {
+    try {
+        let response = await userService.fetchDataUserForStatService();
+        return res.status(200).json(response);
+
+    } catch (e) {
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from server...",
+        })
+    }
+}
+
 let fetchUser = async (req, res) => {
     try {
-        let response = await userService.getUserById(req.params.id);
+        let response = await userService.fetchUserById(req.params.id);
         return res.status(200).json(response);
 
     } catch (e) {
@@ -221,6 +234,7 @@ module.exports = {
     fetchAccount,
     handleLogout,
     fetchAllUser,
+    fetchDataUserForStat,
     fetchUser,
     createNewUser,
     updateUser,

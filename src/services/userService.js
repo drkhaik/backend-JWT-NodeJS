@@ -182,7 +182,40 @@ let fetchAllUser = () => {
     })
 }
 
-let getUserById = (id) => {
+let fetchDataUserForStatService = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const usersFromDB = await User.find({}).populate('roleID', 'name')
+                .sort({ createdAt: -1 })
+                .select({
+                    _id: 1,
+                });
+            let userStat = {}
+            for (let i = 0; i < usersFromDB.length; i++) {
+                let role = usersFromDB[i].roleID;
+                let roleId = role._id.toString();
+                if (!userStat[roleId]) {
+                    userStat[roleId] = {
+                        role: role.name,
+                        count: 1
+                    }
+                } else {
+                    userStat[roleId].count++;
+                }
+            }
+            const result = Object.values(userStat);
+            resolve({
+                errCode: 0,
+                message: "OK",
+                data: result
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+let fetchUserById = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await User.findOne({
@@ -497,7 +530,8 @@ module.exports = {
     hashUserPassword: hashUserPassword,
     createUserService: createUserService,
     fetchAllUser: fetchAllUser,
-    getUserById: getUserById,
+    fetchDataUserForStatService: fetchDataUserForStatService,
+    fetchUserById: fetchUserById,
     fetchAccountService: fetchAccountService,
     updateUserService: updateUserService,
     changeUserPasswordService: changeUserPasswordService,

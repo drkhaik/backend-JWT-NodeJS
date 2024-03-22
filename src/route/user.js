@@ -28,6 +28,7 @@ router.get("/auth/google/callback", passport.authenticate("google", {
 router.post('/google-login', userController.handleGoogleLogin);
 
 router.get('/users', checkAdminPermission, userController.fetchAllUser);
+router.get('/user/stat', checkAdminPermission, userController.fetchDataUserForStat);
 router.get('/user/:id', userController.fetchUser);
 router.post('/user', userController.createNewUser);
 router.put('/user', userController.updateUser);

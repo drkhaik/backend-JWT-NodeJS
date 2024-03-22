@@ -78,15 +78,15 @@ var handleGoogleLogin = /*#__PURE__*/function () {
           response = _context2.sent;
           if (response !== null && response !== void 0 && (_response$data2 = response.data) !== null && _response$data2 !== void 0 && _response$data2.access_token) {
             res.cookie("jwt", response.data.access_token,
-            // { httpOnly: true, maxAge: 60 * 60 * 1000, secure: true });
-            {
-              withCredentials: true,
-              path: "/",
-              httpOnly: true,
-              maxAge: 60 * 60 * 1000,
-              secure: true,
-              sameSite: 'none'
-            });
+              // { httpOnly: true, maxAge: 60 * 60 * 1000, secure: true });
+              {
+                withCredentials: true,
+                path: "/",
+                httpOnly: true,
+                maxAge: 60 * 60 * 1000,
+                secure: true,
+                sameSite: 'none'
+              });
           }
           return _context2.abrupt("return", res.status(200).json(response));
         case 13:
@@ -225,7 +225,7 @@ var fetchUser = /*#__PURE__*/function () {
         case 0:
           _context6.prev = 0;
           _context6.next = 3;
-          return _userService["default"].getUserById(req.params.id);
+          return _userService["default"].fetchUserById(req.params.id);
         case 3:
           response = _context6.sent;
           return _context6.abrupt("return", res.status(200).json(response));

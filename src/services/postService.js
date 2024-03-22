@@ -2,8 +2,8 @@ import Post from "../models/Post";
 
 const limitNumberOfPost = 5;
 const limitNumberOfFacultyPost = 2;
+
 let createPostService = async (data) => {
-    // console.log("check data", data);
     return new Promise(async (resolve, reject) => {
         try {
             const res = await Post.create({
@@ -11,7 +11,6 @@ let createPostService = async (data) => {
                 description: data.description,
                 author: data.author
             })
-
             if (!res && !res._id) {
                 resolve({
                     errCode: 1,
@@ -42,6 +41,39 @@ let fetchAllPostService = () => {
                 errCode: 0,
                 message: "OK",
                 data: posts
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+let fetchAllPostForStatService = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const postsFromDB = await Post.find({}).populate('author', 'name')
+                .sort({ createdAt: -1 })
+                .select({
+                    _id: 1,
+                })
+            let postStat = {}
+            for (let i = 0; i < postsFromDB.length; i++) {
+                let author = postsFromDB[i].author;
+                let authorId = author._id.toString();
+                if (!postStat[authorId]) {
+                    postStat[authorId] = {
+                        author: author.name,
+                        count: 1
+                    }
+                } else {
+                    postStat[authorId].count++;
+                }
+            }
+            const result = Object.values(postStat);
+            resolve({
+                errCode: 0,
+                message: "OK",
+                data: result
             })
         } catch (e) {
             reject(e)
@@ -188,5 +220,6 @@ module.exports = {
     fetchMorePostsByFacultyService: fetchMorePostsByFacultyService,
     updatePostService: updatePostService,
     deletePostService: deletePostService,
-    fetchMorePostService: fetchMorePostService
+    fetchMorePostService: fetchMorePostService,
+    fetchAllPostForStatService: fetchAllPostForStatService,
 }
