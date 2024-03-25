@@ -26,7 +26,6 @@ passport.use(
           });
           await user.save();
         }
-        console.log("check user passport google SSO", user);
         return done(null, user);
       } catch (error) {
         return done(error, null)

@@ -15,7 +15,6 @@ let handleLogin = async (req, res) => {
             res.cookie("jwt", response.data.access_token,
                 { httpOnly: true, maxAge: 60 * 60 * 1000, secure: true, sameSite: 'none' });
         }
-        // console.log("check response", response);
         return res.status(200).json(response);
     } catch (e) {
         // console.log("check e", e);
@@ -29,7 +28,6 @@ let handleLogin = async (req, res) => {
 let handleGoogleLogin = async (req, res) => {
     let user = req.user;
     let type = req.body.type;
-    console.log("check user controller", user);
     if (!user) {
         return res.status(200).json({
             errCode: 1,
@@ -78,6 +76,7 @@ let handleLogout = async (req, res) => {
         res.clearCookie("jwt", { httpOnly: true, secure: true });
         res.clearCookie("express:sess", { httpOnly: true, secure: true });
         res.clearCookie("express:sess.sig", { httpOnly: true, secure: true });
+        res.clearCookie("connect.sid", { httpOnly: true, secure: true });
         return res.status(200).json({
             errCode: 0,
             message: "Ok",

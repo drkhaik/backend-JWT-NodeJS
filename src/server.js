@@ -47,20 +47,28 @@ store.on('error', function (error) {
     console.log(error);
 });
 
+
 app.use(session({
     secret: process.env.JWT_SECRET,
     store: store,
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-        // secure: true, // Set to true if you're using HTTPS
-        // httpOnly: true,
-        maxAge: 1000 * 60 * 60,
-        // sameSite: "none",
-        // domain: `${process.env.URL_FRONTEND}`,
-        // path: '/'
-    }
+    resave: false,
+    saveUninitialized: false
 }));
+
+// app.use(session({
+//     secret: process.env.JWT_SECRET,
+//     store: store,
+//     resave: true,
+//     saveUninitialized: true,
+//     cookie: {
+//         // secure: true, // Set to true if you're using HTTPS
+//         // httpOnly: true,
+//         maxAge: 1000 * 60 * 60,
+//         // sameSite: "none",
+//         // domain: `${process.env.URL_FRONTEND}`,
+//         // path: '/'
+//     }
+// }));
 
 // app.use(
 //     cookieSession({
