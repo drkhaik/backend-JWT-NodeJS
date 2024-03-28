@@ -25,9 +25,9 @@ const salt = bcrypt.genSaltSync(10);
 //     })
 // }
 
-let checkUserEmailOrStudentId = async (emailOrStudentId) => {
-    const email = await User.findOne({ email: emailOrStudentId });
-    const studentId = await User.findOne({ studentId: emailOrStudentId });
+let fetchUserByEmailOrStudentId = async (emailOrStudentId) => {
+    const email = await User.findOne({ email: emailOrStudentId }).select({ createdAt: 0, updatedAt: 0 });
+    const studentId = await User.findOne({ studentId: emailOrStudentId }).select({ __v: 0, createdAt: 0, updatedAt: 0 });
     return email || studentId;
 };
 
@@ -90,40 +90,35 @@ let handleLoginService = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
             let response = {}
-            let isExist = await checkUserEmailOrStudentId(email);
-            if (isExist) {
-                const userFromDB = await User.findOne({ email: email }).select({ public_id: 0, __v: 0, createdAt: 0, updatedAt: 0 });
-                if (userFromDB) {
-                    let isPasswordCorrect = await bcrypt.compareSync(password, userFromDB.password);
-                    if (isPasswordCorrect) {
-                        const role = await getRole(userFromDB);
-                        let user = {
-                            ...userFromDB._doc,
-                        };
-                        user.role = role.name;
-                        delete user.password;
+            const userFromDB = await fetchUserByEmailOrStudentId(email);
+            if (userFromDB) {
+                let isPasswordCorrect = await bcrypt.compareSync(password, userFromDB.password);
+                if (isPasswordCorrect) {
+                    const role = await getRole(userFromDB);
+                    let user = {
+                        ...userFromDB._doc,
+                    };
+                    user.role = role.name;
+                    delete user.password;
 
-                        let payload = { user };
-                        let token = createTokenJWT(payload);
+                    let payload = { user };
+                    let token = createTokenJWT(payload);
 
-                        response.errCode = 0;
-                        response.message = "Ok";
-                        response.data = {
-                            access_token: token,
-                            user,
-                        };
-                    } else {
-                        response.errCode = 3;
-                        response.message = "Wrong password!";
-                    }
+                    response.errCode = 0;
+                    response.message = "Ok";
+                    response.data = {
+                        access_token: token,
+                        user,
+                    };
                 } else {
-                    response.errCode = 2;
-                    response.message = "User not found";
+                    response.errCode = 3;
+                    response.message = "Wrong password!";
                 }
             } else {
-                response.errCode = 1;
-                response.message = "Your Email or Student Id isn't exist in your system. Plz try the other one!";
+                response.errCode = 2;
+                response.message = "User not found";
             }
+
             resolve(response)
         } catch (e) {
             reject(e)
