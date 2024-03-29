@@ -89,6 +89,35 @@ router.post('/upload/file', uploadMessageFile.single('file'), async (req, res) =
     }
 });
 
+router.post('/upload/document', uploadMessageFile.single('file'), async (req, res) => {
+    try {
+        if (!req.file) {
+            throw new Error('No file uploaded');
+        }
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            resource_type: 'auto',
+            folder: 'document-sharing-uef',
+            // mutate the public_id so u can not upload another file with the
+            // same name, because it will have the same url.
+            public_id: req.file.originalname,
+        });
+
+        fs.unlinkSync(req.file.path);
+        const data = {
+            url: result.secure_url,
+            public_id: result.public_id
+        };
+
+        res.status(200).json({
+            errCode: 0,
+            data: data
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Upload to Cloudinary failed');
+    }
+});
+
 
 // router.post('/upload/file', uploadMessageFile.single('file'), async (req, res) => {
 //     console.log("cehck file", req.file);

@@ -1,11 +1,10 @@
-import Faculty from "../models/Faculty";
+import Subject from "../models/Subject";
 
-let createFacultyService = async (data) => {
+let createSubjectService = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const res = await Faculty.create({
+            const res = await Subject.create({
                 name: data.name,
-                // description: data.description,
             });
             if (!res && !res._id) {
                 resolve({
@@ -23,10 +22,10 @@ let createFacultyService = async (data) => {
     })
 }
 
-let fetchAllFacultyService = () => {
+let fetchAllSubjectService = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            let faculties = await Faculty.find({})
+            let subjects = await Subject.find({})
                 .sort({ createdAt: -1 })
                 .select({
                     __v: 0,
@@ -36,7 +35,7 @@ let fetchAllFacultyService = () => {
             resolve({
                 errCode: 0,
                 message: "OK",
-                data: faculties
+                data: subjects
             })
         } catch (e) {
             reject(e)
@@ -45,16 +44,16 @@ let fetchAllFacultyService = () => {
 }
 
 
-let updateFacultyService = async (data) => {
+let updateSubjectService = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let faculty = await Faculty.findOne({
+            let subject = await Subject.findOne({
                 _id: data._id
             });
-            if (faculty) {
-                faculty.name = data.name;
-                // faculty.description = data.description;
-                await Faculty.updateOne({ _id: data._id }, faculty);
+            if (subject) {
+                subject.name = data.name;
+                // subject.description = data.description;
+                await Subject.updateOne({ _id: data._id }, subject);
                 resolve({
                     errCode: 0,
                     message: `Ok`
@@ -62,7 +61,7 @@ let updateFacultyService = async (data) => {
             } else {
                 resolve({
                     errCode: 1,
-                    message: `The Faculty not found!`
+                    message: `The Subject not found!`
                 })
             }
         } catch (e) {
@@ -71,7 +70,7 @@ let updateFacultyService = async (data) => {
     })
 }
 
-let deleteFacultyService = async (_id) => {
+let deleteSubjectService = async (_id) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!_id) {
@@ -80,9 +79,9 @@ let deleteFacultyService = async (_id) => {
                     message: 'Missing required parameters!'
                 })
             }
-            let faculty = await Faculty.findById(_id);
-            if (faculty) {
-                await Faculty.deleteOne({ _id: _id });
+            let subject = await Subject.findById(_id);
+            if (subject) {
+                await Subject.deleteOne({ _id: _id });
                 resolve({
                     errCode: 0,
                     message: `OK`
@@ -90,7 +89,7 @@ let deleteFacultyService = async (_id) => {
             } else {
                 resolve({
                     errCode: 1,
-                    message: `The faculty not found!`
+                    message: `The subject not found!`
                 })
             }
         } catch (e) {
@@ -100,8 +99,8 @@ let deleteFacultyService = async (_id) => {
 }
 
 module.exports = {
-    createFacultyService: createFacultyService,
-    fetchAllFacultyService: fetchAllFacultyService,
-    updateFacultyService: updateFacultyService,
-    deleteFacultyService: deleteFacultyService,
+    createSubjectService: createSubjectService,
+    fetchAllSubjectService: fetchAllSubjectService,
+    updateSubjectService: updateSubjectService,
+    deleteSubjectService: deleteSubjectService,
 }
