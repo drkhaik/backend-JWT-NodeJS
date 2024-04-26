@@ -6,3 +6,4 @@ package-lock.json
 .env
 public
 node_modules/*
+build/

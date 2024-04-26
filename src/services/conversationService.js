@@ -52,7 +52,6 @@ let fetchConversationByUserIdService = (userId) => {
                 let lastMessage = await Message.findOne({ conversation: conversations[i].conversationId })
                     .sort({ createdAt: -1 })
                     .select({ __v: 0, updatedAt: 0, __t: 0, _id: 0, createdAt: 0 });
-                // console.log("check lastMessageId", lastMessage);
                 let newUser = {
                     ...user[0]._doc,
                     conversationId: conversations[i].conversationId,
@@ -60,7 +59,6 @@ let fetchConversationByUserIdService = (userId) => {
                 };
                 users.push(newUser);
             }
-            // console.log("check users", users);
             // const users = await User.find({
             //     _id: { $in: arrRecipientId, },
             // }, { _id: true, name: true, email: true, image: true });

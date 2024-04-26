@@ -45,7 +45,6 @@ let fetchDocumentBySubjectIdService = (subjectId) => {
                     updatedAt: 0,
                     public_id: 0,
                 });
-
             // console.log("check documents", documents);
             resolve({
                 errCode: 0,
@@ -112,6 +111,58 @@ let deleteDocumentService = async (_id) => {
     })
 }
 
+let fetchDocumentMostRatingService = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const documentsFromDB = await Document.aggregate([
+                {
+                    $addFields: {
+                        countRating: { $size: { $ifNull: ["$ratings", []] } }
+                    }
+                },
+                {
+                    $sort: { countRating: -1 }
+                },
+                {
+                    $limit: 5
+                },
+                // {
+                //     $lookup: {
+                //         from: "users",
+                //         localField: "author",
+                //         foreignField: "_id",
+                //         as: "author"
+                //     }
+                // },
+                // {
+                //     $unwind: "$author"
+                // },
+                {
+                    $project: {
+                        __v: 0,
+                        updatedAt: 0,
+                        public_id: 0,
+                        // "author._id": 0,
+                        // "author.email": 0,
+                        // "author.password": 0,
+                        // "author.description": 0,
+                        // "author.public_id": 0,
+                    }
+                }
+            ]);
+
+            // console.log("check documentsFromDB", documentsFromDB);
+            resolve({
+                errCode: 0,
+                message: "OK",
+                data: documentsFromDB
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 let fetchAllDocumentForStatService = () => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -120,7 +171,6 @@ let fetchAllDocumentForStatService = () => {
                 .select({
                     _id: 1,
                 })
-            console.log("check documentsFromDB", documentsFromDB);
             let documentStat = {}
             for (let i = 0; i < documentsFromDB.length; i++) {
                 let author = documentsFromDB[i].author;
@@ -135,7 +185,6 @@ let fetchAllDocumentForStatService = () => {
                 }
             }
             const result = Object.values(documentStat);
-            console.log("check result", result);
             resolve({
                 errCode: 0,
                 message: "OK",
@@ -147,6 +196,46 @@ let fetchAllDocumentForStatService = () => {
     })
 }
 
+let ratingDocumentService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        const { documentId, userId, rating } = data;
+        if (!documentId) {
+            resolve({
+                errCode: 2,
+                message: 'Missing required parameters!'
+            })
+        }
+        try{
+            const document = await Document.findOne({
+                _id: documentId
+            });
+            if (!document) {
+                return resolve({
+                    errCode: 1,
+                    message: `The Document not found!`
+                });
+            }
+            const userIdIndex = document.ratings.indexOf(userId);
+
+            if (rating === 1 && userIdIndex === -1) {
+                document.ratings.push(userId);
+            } else if (rating !== 1 && userIdIndex !== -1) {
+                document.ratings.splice(userIdIndex, 1); // remove userId
+            }
+
+            await document.save();
+
+            resolve({
+                errCode: 0,
+                message: `Ok`
+            });
+
+        }catch(e){
+
+        }
+    })
+}
+
 module.exports = {
     createDocumentService: createDocumentService,
     fetchDocumentBySubjectIdService: fetchDocumentBySubjectIdService,
@@ -154,4 +243,6 @@ module.exports = {
     // updateDocumentService: updateDocumentService,
     deleteDocumentService: deleteDocumentService,
     fetchAllDocumentForStatService: fetchAllDocumentForStatService,
+    fetchDocumentMostRatingService: fetchDocumentMostRatingService,
+    ratingDocumentService: ratingDocumentService,
 }

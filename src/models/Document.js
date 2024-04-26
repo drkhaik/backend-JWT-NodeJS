@@ -33,7 +33,11 @@ const documentSchema = new Schema({
     },
     fileSize: {
         type: Number
-    }
+    },
+    ratings: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    }]
 }, { timestamps: true });
 
 const Document = mongoose.model('Document', documentSchema);

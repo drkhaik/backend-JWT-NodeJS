@@ -73,6 +73,31 @@ let fetchAllDocumentForStat = async (req, res) => {
     }
 }
 
+let fetchDocumentMostRating = async (req, res) => {
+    try {
+        let response = await documentService.fetchDocumentMostRatingService();
+        return res.status(200).json(response);
+    } catch (e) {
+        console.log("check e", e);
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from server...",
+        })
+    }
+}
+
+let ratingDocument = async (req, res) => {
+    try {
+        let response = await documentService.ratingDocumentService(req.body);
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(200).json({
+            errCode: -1,
+            message: "Error from server...",
+        })
+    }
+}
+
 module.exports = {
     createDocument,
     fetchDocumentBySubjectId,
@@ -80,4 +105,6 @@ module.exports = {
     // updateDocument,
     deleteDocument,
     fetchAllDocumentForStat,
+    fetchDocumentMostRating,
+    ratingDocument,
 }
